@@ -1,0 +1,12 @@
+=======================
+Legend
+=======================
+ [+]  A feature added
+ [-]  A bug fixed
+ [*]  A change
+ [!]  An important note
+=======================
+
+2008/04/07 oleh_derevenko
+
+ [+]  Initial commit
