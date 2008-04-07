@@ -5,7 +5,7 @@ OU is a free multi-platform library that provides basic API for
 atomic (interlocked) operations and thread local storage. It also 
 implements assertion checking macros, classes for flags manipulations 
 (both with ordinary and atomic access), templates for enumerated 
-values decoding/encoding by static arrays, and some more usefil macros
+values decoding/encoding by static arrays, and some more useful macros
 and templates. Most of the library is implemented as inlined code.
 Library allows customization of assertion failure handlers and memory
 management functions. It is possible to link OU more than once into 
