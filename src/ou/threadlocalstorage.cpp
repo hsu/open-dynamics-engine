@@ -1,8 +1,7 @@
 /*************************************************************************
  *                                                                       *
  * ODER's Utilities Library. Copyright (C) 2008 Oleh Derevenko.          *
- * All rights reserved.  e-mail: olah_daravanko@sourceforge.net          *
- * (change all "a" to "e")                                               *
+ * All rights reserved.  e-mail: odar@eleks.com (change all "a" to "e")  *
  *                                                                       *
  * This library is free software; you can redistribute it and/or         *
  * modify it under the terms of EITHER:                                  *
@@ -15,11 +14,13 @@
  *       your information in file LICENSE.TXT.                           *
  *   (2) The BSD-style license that is included with this library in     *
  *       the file LICENSE-BSD.TXT.                                       *
+ *   (3) The zlib/libpng license that is included with this library in   *
+ *       the file LICENSE-ZLIB.TXT                                       *
  *                                                                       *
  * This library is distributed WITHOUT ANY WARRANTY, including implied   *
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.      *
  * See the files LICENSE.TXT and LICENSE-LESSER.TXT or LICENSE-BSD.TXT   *
- * for more details.                                                     *
+ * or LICENSE-ZLIB.TXT for more details.                                 *
  *                                                                       *
  *************************************************************************/
 

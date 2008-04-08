@@ -7,6 +7,11 @@ Legend
  [!]  An important note
 =======================
 
+2008/04/08 oleh_derevenko
+
+ [!]  Licensing changed: permission to distribute/use library under zlib/libpng
+      license added.
+      
 2008/04/07 oleh_derevenko
 
  [+]  Initial commit

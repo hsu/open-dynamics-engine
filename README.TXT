@@ -1,4 +1,5 @@
-ODER's Utilities Library (OU), Copyright (C) 2008 Oleh Derevenko.
+ODER's Utilities Library (OU), Copyright (C) 2008 Oleh Derevenko,
+E-mail: odar@eleks.com (change all "a" to "e").
 -------------------------------------------------------------------------
 
 OU is a free multi-platform library that provides basic API for
@@ -22,11 +23,13 @@ modify it under the terms of EITHER:
       your information in file LICENSE.TXT.
   (2) The BSD-style license that is included with this library in
       the file LICENSE-BSD.TXT.
+  (3) The zlib/libpng license that is included with this library in
+      the file LICENSE-ZLIB.TXT
 
 This library is distributed WITHOUT ANY WARRANTY, including implied
 warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the files LICENSE.TXT and LICENSE-LESSER.TXT or LICENSE-BSD.TXT
-for more details.
+or LICENSE-ZLIB.TXT for more details.
 
  * Installation instructions are in the INSTALL.TXT file
 
@@ -35,6 +38,5 @@ automatically transfer unrestricted rights in those changes to the OU
 project, which is released under the dual licenses as indicated. The
 owners can also use the contributions in other projects under other
 licenses if they want (including sell them), but they can't prevent
-anyone from releasing the contributions under the dual OU licenses as
-part of an OU release.
-
+anyone from releasing the contributions under the threefold OU licenses 
+as part of an OU release.
