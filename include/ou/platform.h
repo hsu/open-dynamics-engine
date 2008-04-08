@@ -59,9 +59,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-#if !defined(__OU_TARGET_OS_DEFINED)
-
-#define __OU_TARGET_OS_DEFINED
+#if !defined(_OU_TARGET_OS)
 
 
 #if defined(_WINDOWS) || defined(_WIN32)
@@ -77,13 +75,6 @@
 #elif defined(__APPLE__)
 
 #define _OU_TARGET_OS			_OU_TARGET_OS_MAC
-
-#if !defined(MAC_OS_X_VERSION)
-
-#error Please defile preprocessor symbol MAC_OS_X_VERSION in command line (e.g. "-DMAC_OS_X_VERSION=1050" for MacOS 10.5)
-
-
-#endif // #if !defined(MAC_OS_X_VERSION)
 
 
 #elif defined(__aix__)
@@ -109,24 +100,35 @@
 #endif // Target OS definitions
 
 
-#else // #if defined(__OU_TARGET_OS_DEFINED)
+#else // #if defined(_OU_TARGET_OS)
 
-#if !defined(_OU_TARGET_OS) || _OU_TARGET_OS <= 0 || _OU_TARGET_OS >= _OU_TARGET_OS__MAX
+#if _OU_TARGET_OS <= 0 || _OU_TARGET_OS >= _OU_TARGET_OS__MAX
 
 #error Please define a valid value for _OU_TARGET_OS
 
 
-#endif // #if !defined(_OU_TARGET_OS) || _OU_TARGET_OS <= 0 || _OU_TARGET_OS >= _OU_TARGET_OS__MAX
+#endif // #if _OU_TARGET_OS <= 0 || _OU_TARGET_OS >= _OU_TARGET_OS__MAX
 
 
-#endif // // #if defined(__OU_TARGET_OS_DEFINED)
+#endif // #if defined(_OU_TARGET_OS)
+
+
+#if _OU_TARGET_OS == _OU_TARGET_OS_MAC
+
+#if !defined(MAC_OS_X_VERSION)
+
+#error Please defile preprocessor symbol MAC_OS_X_VERSION in command line (e.g. "-DMAC_OS_X_VERSION=1050" for MacOS 10.5)
+
+
+#endif // #if !defined(MAC_OS_X_VERSION)
+
+
+#endif // #if _OU_TARGET_OS == _OU_TARGET_OS_MAC
 
 
 //////////////////////////////////////////////////////////////////////////
 
-#if !defined(__OU_TARGET_BITS_DEFINED)
-
-#define __OU_TARGET_BITS_DEFINED
+#if !defined(_OU_TARGET_BITS)
 
 
 #if defined(_LP64) || defined(_WIN64)
@@ -142,24 +144,22 @@
 #endif // #if !defined(_LP64)
 
 
-#else // #if defined(__OU_TARGET_BITS_DEFINED)
+#else // #if defined(_OU_TARGET_BITS)
 
-#if !defined(_OU_TARGET_BITS) || _OU_TARGET_BITS <= 0 || _OU_TARGET_BITS >= _OU_TARGET_BITS__MAX
+#if _OU_TARGET_BITS <= 0 || _OU_TARGET_BITS >= _OU_TARGET_BITS__MAX
 
 #error Please define a valid value for _OU_TARGET_BITS
 
 
-#endif // #if !defined(_OU_TARGET_BITS) || _OU_TARGET_BITS <= 0 || _OU_TARGET_BITS >= _OU_TARGET_BITS__MAX
+#endif // #if _OU_TARGET_BITS <= 0 || _OU_TARGET_BITS >= _OU_TARGET_BITS__MAX
 
 
-#endif // #if defined(__OU_TARGET_BITS_DEFINED)
+#endif // #if defined(_OU_TARGET_BITS)
 
 
 //////////////////////////////////////////////////////////////////////////
 
-#if !defined(__OU_TARGET_ARCH_DEFINED)
-
-#define __OU_TARGET_ARCH_DEFINED
+#if !defined(_OU_TARGET_ARCH)
 
 
 #if defined(__i386__) || defined(_M_IX86)
@@ -195,17 +195,17 @@
 #endif // Architecture definitions
 
 
-#else // #if defined(__OU_TARGET_ARCH_DEFINED)
+#else // #if defined(_OU_TARGET_ARCH)
 
-#if !defined(_OU_TARGET_ARCH) || _OU_TARGET_ARCH <= 0 || _OU_TARGET_ARCH >= _OU_TARGET_ARCH__MAX
+#if _OU_TARGET_ARCH <= 0 || _OU_TARGET_ARCH >= _OU_TARGET_ARCH__MAX
 
 #error Please define a valid value for _OU_TARGET_ARCH
 
 
-#endif // #if !defined(_OU_TARGET_ARCH) || _OU_TARGET_ARCH <= 0 || _OU_TARGET_ARCH >= _OU_TARGET_ARCH__MAX
+#endif // #if _OU_TARGET_ARCH <= 0 || _OU_TARGET_ARCH >= _OU_TARGET_ARCH__MAX
 
 
-#endif // #if defined(__OU_TARGET_ARCH_DEFINED)
+#endif // #if defined(_OU_TARGET_ARCH)
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -227,15 +227,11 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-#if !defined(__OU_COMPILER_DEFINED)
-
-#define __OU_COMPILER_DEFINED
-
+#if !defined(_OU_COMPILER)
 
 #if defined(__GNUC__)
 
 #define _OU_COMPILER		_OU_COMPILER_GCC
-
 
 #if __GNUC__ < 4
 
@@ -248,7 +244,6 @@
 #elif defined(_MSC_VER)
 
 #define _OU_COMPILER		_OU_COMPILER_MSVC
-
 
 #if _MSC_VER <= 1200
 
@@ -266,26 +261,22 @@
 #endif // Compiler specific definitions
 
 
-#if !defined(_OU_COMPILER_VERSION)
+#else // #if defined(_OU_COMPILER)
 
-#define _OU_COMPILER_VERSION _OU_COMPILER_VERSION__OTHER
-
-
-#endif // #if !defined(_OU_COMPILER_VERSION)
-
-
-#else // #if defined(__OU_COMPILER_DEFINED)
-
-#if !defined(_OU_COMPILER) || _OU_COMPILER <= 0 || _OU_COMPILER >= _OU_COMPILER__MAX
+#if _OU_COMPILER <= 0 || _OU_COMPILER >= _OU_COMPILER__MAX
 
 #error Please define a valid value for _OU_COMPILER
 
 
-#endif
+#endif // #if _OU_COMPILER <= 0 || _OU_COMPILER >= _OU_COMPILER__MAX
+
+
+#endif // #if defined(_OU_COMPILER)
+
 
 #if !defined(_OU_COMPILER_VERSION)
 
-#define _OU_COMPILER_VERSION	_OU_COMPILER_VERSION__OTHER
+#define _OU_COMPILER_VERSION _OU_COMPILER_VERSION__OTHER
 
 
 #endif // #if !defined(_OU_COMPILER_VERSION)
@@ -297,9 +288,6 @@
 
 
 #endif // #if _OU_COMPILER_VERSION <= 0 || _OU_COMPILER_VERSION >= _OU_COMPILER_VERSION__MAX
-
-
-#endif // #if defined(__OU_COMPILER_DEFINED)
 
 
 //////////////////////////////////////////////////////////////////////////
