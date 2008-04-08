@@ -525,6 +525,12 @@ bool CTLSStorageArray::FindAbandonedStorageBlockIndex(unsigned int &nOutFreeBloc
 		
 		if (!OU_IN_INT_RANGE(dwWaitResult - WAIT_OBJECT_0, 0, nHandleCount))
 		{
+			// Wait should not normally fail. If it does it's in most cases an indication
+			// of invalid handle passed as parameter. However it may fail because of other
+			// reasons as well. If this assertion fails too often and you are sure all the 
+			// handles are valid, it is safe to comment it.
+			OU_ASSERT(dwWaitResult != WAIT_FAILED);
+
 			break;
 		}
 
