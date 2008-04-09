@@ -123,7 +123,7 @@ public:
 	{
 		ContainerType ctFlagsOldValue = m_ctFlagsValue;
 	
-		m_ctFlagsValue = ctFlagsOldValue & ~ctFlagsMask | ctFlagsValue & ctFlagsMask;
+		m_ctFlagsValue = (ctFlagsOldValue & ~ctFlagsMask) | (ctFlagsValue & ctFlagsMask);
 		
 		return ctFlagsOldValue;
 	}
@@ -135,7 +135,7 @@ public:
 	{
 		ContainerType ctFlagsOldValue = m_ctFlagsValue;
 		
-		m_ctFlagsValue = ctFlagsOldValue & ~ctFlagsMask | ctFlagsValue & ctFlagsMask;
+		m_ctFlagsValue = (ctFlagsOldValue & ~ctFlagsMask) | (ctFlagsValue & ctFlagsMask);
 		
 		return ((ctFlagsOldValue ^ ctFlagsValue) & ctFlagsMask) != (ContainerType)0;
 	}
@@ -152,7 +152,7 @@ public:
 	_OU_ALWAYSINLINE_PRE ContainerType _OU_ALWAYSINLINE_IN _OU_CONVENTION_METHOD 
 	/*ContainerType */QueryFlagsByMask(ContainerType ctFlagsMask) const
 	{
-		return m_ctFlagsValue & ctFlagsMask;
+		return (m_ctFlagsValue & ctFlagsMask);
 	}
 	
 public:

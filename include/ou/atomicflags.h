@@ -138,7 +138,7 @@ public:
 		{
 			aoFlagsOldValue = m_aoFlagsValue;
 		}
-		while (!AtomicCompareExchange(&m_aoFlagsValue, aoFlagsOldValue, aoFlagsOldValue & ~aoFlagsMask | aoFlagsValue & aoFlagsMask));
+		while (!AtomicCompareExchange(&m_aoFlagsValue, aoFlagsOldValue, (aoFlagsOldValue & ~aoFlagsMask) | (aoFlagsValue & aoFlagsMask)));
 		
 		return aoFlagsOldValue;
 	}
@@ -154,7 +154,7 @@ public:
 		{
 			aoFlagsOldValue = m_aoFlagsValue;
 		}
-		while (!AtomicCompareExchange(&m_aoFlagsValue, aoFlagsOldValue, aoFlagsOldValue & ~aoFlagsMask | aoFlagsValue & aoFlagsMask));
+		while (!AtomicCompareExchange(&m_aoFlagsValue, aoFlagsOldValue, (aoFlagsOldValue & ~aoFlagsMask) | (aoFlagsValue & aoFlagsMask)));
 
 		return ((aoFlagsOldValue ^ aoFlagsValue) & aoFlagsMask) != (atomicord32)0;
 	}
@@ -171,7 +171,7 @@ public:
 	_OU_ALWAYSINLINE_PRE atomicord32 _OU_ALWAYSINLINE_IN 
 	/*atomicord32 */QueryFlagsByMask(atomicord32 aoFlagsMask) const
 	{
-		return m_aoFlagsValue & aoFlagsMask;
+		return (m_aoFlagsValue & aoFlagsMask);
 	}
 	
 public:

@@ -54,9 +54,9 @@
 #include <assert.h>
 
 
-#define OU__ASSERT_HANDLER(Condition) (false || (Condition) || _OU_NAMESPACE::CAssertionCheckCustomization::GetAssertFailureCustomHandler() && (_OU_NAMESPACE::CAssertionCheckCustomization::GetAssertFailureCustomHandler()(_OU_NAMESPACE::AFS_ASSERT, #Condition, __FILE__, __LINE__), true))
+#define OU__ASSERT_HANDLER(Condition) (false || (Condition) || (_OU_NAMESPACE::CAssertionCheckCustomization::GetAssertFailureCustomHandler() && (_OU_NAMESPACE::CAssertionCheckCustomization::GetAssertFailureCustomHandler()(_OU_NAMESPACE::AFS_ASSERT, #Condition, __FILE__, __LINE__), true)))
 
-#define OU__CHECK_HANDLER(Condition) ((bConditionValue = false || (Condition)) || _OU_NAMESPACE::CAssertionCheckCustomization::GetAssertFailureCustomHandler() && (_OU_NAMESPACE::CAssertionCheckCustomization::GetAssertFailureCustomHandler()(_OU_NAMESPACE::AFS_CHECK,  #Condition, __FILE__, __LINE__), true))
+#define OU__CHECK_HANDLER(Condition) ((bConditionValue = false || (Condition)) || (_OU_NAMESPACE::CAssertionCheckCustomization::GetAssertFailureCustomHandler() && (_OU_NAMESPACE::CAssertionCheckCustomization::GetAssertFailureCustomHandler()(_OU_NAMESPACE::AFS_CHECK,  #Condition, __FILE__, __LINE__), true)))
 
 
 #define OU_ASSERT(Condition) assert(OU__ASSERT_HANDLER(Condition))

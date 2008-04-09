@@ -1273,7 +1273,7 @@ bool TestAtomicFlags_AssignFlagsByMask()
 
 		atomicord32 aoPreviousFlags = afTestFlags.AssignFlagsByMask(g_aoTestMask32, g_aoTestMask32);
 
-		const atomicord32 aoNewFlags = g_aoTestValue32 & ~g_aoTestMask32 | g_aoTestMask32;
+		const atomicord32 aoNewFlags = (g_aoTestValue32 & ~g_aoTestMask32) | g_aoTestMask32;
 
 		if (aoPreviousFlags != g_aoTestValue32 || afTestFlags.QueryFlagsAllValues() != aoNewFlags)
 		{
@@ -1292,7 +1292,7 @@ bool TestAtomicFlags_AssignFlagsByMask()
 		atomicord32 aoYetAnotherPreviousFlags = afTestFlags.AssignFlagsByMask(g_aoTestMask32, g_aoTestMask32 & g_aoTestValue32);
 		OU_ASSERT((g_aoTestMask32 & g_aoTestValue32) != 0); // Test degeneration
 		
-		const atomicord32 aoYetAnotherNewFlags = aoAnotherNewFlags & ~g_aoTestMask32 | (g_aoTestMask32 & g_aoTestValue32);
+		const atomicord32 aoYetAnotherNewFlags = (aoAnotherNewFlags & ~g_aoTestMask32) | (g_aoTestMask32 & g_aoTestValue32);
 		OU_ASSERT(aoYetAnotherNewFlags != (atomicord32)OU_UINT32_MAX); // Test degeneration
 		
 		if (aoYetAnotherPreviousFlags != aoAnotherNewFlags || afTestFlags.QueryFlagsAllValues() != aoYetAnotherNewFlags)
@@ -1317,7 +1317,7 @@ bool TestAtomicFlags_AlterFlagsByMask()
 		
 		bool bWasModification = afTestFlags.AlterFlagsByMask(g_aoTestMask32, g_aoTestMask32);
 		
-		const atomicord32 aoNewFlags = g_aoTestValue32 & ~g_aoTestMask32 | g_aoTestMask32;
+		const atomicord32 aoNewFlags = (g_aoTestValue32 & ~g_aoTestMask32) | g_aoTestMask32;
 		
 		if (bWasModification != ((g_aoTestValue32 & g_aoTestMask32) != g_aoTestMask32) || afTestFlags.QueryFlagsAllValues() != aoNewFlags)
 		{
@@ -1343,7 +1343,7 @@ bool TestAtomicFlags_AlterFlagsByMask()
 		bool bWasYetAnotherModification = afTestFlags.AlterFlagsByMask(g_aoTestMask32, g_aoTestMask32 & g_aoTestValue32);
 		OU_ASSERT((g_aoTestMask32 & g_aoTestValue32) != 0); // Test degeneration
 		
-		const atomicord32 aoYetAnotherNewFlags = aoAnotherNewFlags & ~g_aoTestMask32 | (g_aoTestMask32 & g_aoTestValue32);
+		const atomicord32 aoYetAnotherNewFlags = (aoAnotherNewFlags & ~g_aoTestMask32) | (g_aoTestMask32 & g_aoTestValue32);
 		OU_ASSERT(aoYetAnotherNewFlags != (atomicord32)OU_UINT32_MAX); // Test degeneration
 		
 		if (bWasYetAnotherModification != ((aoAnotherNewFlags & g_aoTestMask32) != (g_aoTestMask32 & g_aoTestValue32)) || afTestFlags.QueryFlagsAllValues() != aoYetAnotherNewFlags)
@@ -2427,7 +2427,7 @@ bool TestSimpleFlags64_AssignFlagsByMask()
 
 		uint64ou uiPreviousFlags = sfTestFlags.AssignFlagsByMask(g_uiTestMask64, g_uiTestMask64);
 
-		const uint64ou uiNewFlags = g_uiTestValue64 & ~g_uiTestMask64 | g_uiTestMask64;
+		const uint64ou uiNewFlags = (g_uiTestValue64 & ~g_uiTestMask64) | g_uiTestMask64;
 
 		if (uiPreviousFlags != g_uiTestValue64 || sfTestFlags.QueryFlagsAllValues() != uiNewFlags)
 		{
@@ -2446,7 +2446,7 @@ bool TestSimpleFlags64_AssignFlagsByMask()
 		uint64ou uiYetAnotherPreviousFlags = sfTestFlags.AssignFlagsByMask(g_uiTestMask64, g_uiTestMask64 & g_uiTestValue64);
 		OU_ASSERT((g_uiTestMask64 & g_uiTestValue64) != 0); // Test degeneration
 		
-		const uint64ou uiYetAnotherNewFlags = uiAnotherNewFlags & ~g_uiTestMask64 | (g_uiTestMask64 & g_uiTestValue64);
+		const uint64ou uiYetAnotherNewFlags = (uiAnotherNewFlags & ~g_uiTestMask64) | (g_uiTestMask64 & g_uiTestValue64);
 		OU_ASSERT(uiYetAnotherNewFlags != OU_UINT64_MAX); // Test degeneration
 		
 		if (uiYetAnotherPreviousFlags != uiAnotherNewFlags || sfTestFlags.QueryFlagsAllValues() != uiYetAnotherNewFlags)
@@ -2471,7 +2471,7 @@ bool TestSimpleFlags64_AlterFlagsByMask()
 		
 		bool bWasModification = sfTestFlags.AlterFlagsByMask(g_uiTestMask64, g_uiTestMask64);
 		
-		const uint64ou uiNewFlags = g_uiTestValue64 & ~g_uiTestMask64 | g_uiTestMask64;
+		const uint64ou uiNewFlags = (g_uiTestValue64 & ~g_uiTestMask64) | g_uiTestMask64;
 		
 		if (bWasModification != ((g_uiTestValue64 & g_uiTestMask64) != g_uiTestMask64) || sfTestFlags.QueryFlagsAllValues() != uiNewFlags)
 		{
@@ -2497,7 +2497,7 @@ bool TestSimpleFlags64_AlterFlagsByMask()
 		bool bWasYetAnotherModification = sfTestFlags.AlterFlagsByMask(g_uiTestMask64, g_uiTestMask64 & g_uiTestValue64);
 		OU_ASSERT((g_uiTestMask64 & g_uiTestValue64) != 0); // Test degeneration
 		
-		const uint64ou uiYetAnotherNewFlags = uiAnotherNewFlags & ~g_uiTestMask64 | (g_uiTestMask64 & g_uiTestValue64);
+		const uint64ou uiYetAnotherNewFlags = (uiAnotherNewFlags & ~g_uiTestMask64) | (g_uiTestMask64 & g_uiTestValue64);
 		OU_ASSERT(uiYetAnotherNewFlags != OU_UINT64_MAX); // Test degeneration
 		
 		if (bWasYetAnotherModification != ((uiAnotherNewFlags & g_uiTestMask64) != (g_uiTestMask64 & g_uiTestValue64)) || sfTestFlags.QueryFlagsAllValues() != uiYetAnotherNewFlags)
@@ -3552,7 +3552,7 @@ bool TestSimpleFlags32_AssignFlagsByMask()
 
 		uint32ou uiPreviousFlags = sfTestFlags.AssignFlagsByMask(g_uiTestMask32, g_uiTestMask32);
 
-		const uint32ou uiNewFlags = g_uiTestValue32 & ~g_uiTestMask32 | g_uiTestMask32;
+		const uint32ou uiNewFlags = (g_uiTestValue32 & ~g_uiTestMask32) | g_uiTestMask32;
 
 		if (uiPreviousFlags != g_uiTestValue32 || sfTestFlags.QueryFlagsAllValues() != uiNewFlags)
 		{
@@ -3571,7 +3571,7 @@ bool TestSimpleFlags32_AssignFlagsByMask()
 		uint32ou uiYetAnotherPreviousFlags = sfTestFlags.AssignFlagsByMask(g_uiTestMask32, g_uiTestMask32 & g_uiTestValue32);
 		OU_ASSERT((g_uiTestMask32 & g_uiTestValue32) != 0); // Test degeneration
 		
-		const uint32ou uiYetAnotherNewFlags = uiAnotherNewFlags & ~g_uiTestMask32 | (g_uiTestMask32 & g_uiTestValue32);
+		const uint32ou uiYetAnotherNewFlags = (uiAnotherNewFlags & ~g_uiTestMask32) | (g_uiTestMask32 & g_uiTestValue32);
 		OU_ASSERT(uiYetAnotherNewFlags != OU_UINT32_MAX); // Test degeneration
 		
 		if (uiYetAnotherPreviousFlags != uiAnotherNewFlags || sfTestFlags.QueryFlagsAllValues() != uiYetAnotherNewFlags)
@@ -3596,7 +3596,7 @@ bool TestSimpleFlags32_AlterFlagsByMask()
 		
 		bool bWasModification = sfTestFlags.AlterFlagsByMask(g_uiTestMask32, g_uiTestMask32);
 		
-		const uint32ou uiNewFlags = g_uiTestValue32 & ~g_uiTestMask32 | g_uiTestMask32;
+		const uint32ou uiNewFlags = (g_uiTestValue32 & ~g_uiTestMask32) | g_uiTestMask32;
 		
 		if (bWasModification != ((g_uiTestValue32 & g_uiTestMask32) != g_uiTestMask32) || sfTestFlags.QueryFlagsAllValues() != uiNewFlags)
 		{
@@ -3622,7 +3622,7 @@ bool TestSimpleFlags32_AlterFlagsByMask()
 		bool bWasYetAnotherModification = sfTestFlags.AlterFlagsByMask(g_uiTestMask32, g_uiTestMask32 & g_uiTestValue32);
 		OU_ASSERT((g_uiTestMask32 & g_uiTestValue32) != 0); // Test degeneration
 		
-		const uint32ou uiYetAnotherNewFlags = uiAnotherNewFlags & ~g_uiTestMask32 | (g_uiTestMask32 & g_uiTestValue32);
+		const uint32ou uiYetAnotherNewFlags = (uiAnotherNewFlags & ~g_uiTestMask32) | (g_uiTestMask32 & g_uiTestValue32);
 		OU_ASSERT(uiYetAnotherNewFlags != OU_UINT32_MAX); // Test degeneration
 		
 		if (bWasYetAnotherModification != ((uiAnotherNewFlags & g_uiTestMask32) != (g_uiTestMask32 & g_uiTestValue32)) || sfTestFlags.QueryFlagsAllValues() != uiYetAnotherNewFlags)
@@ -4677,7 +4677,7 @@ bool TestSimpleFlags16_AssignFlagsByMask()
 
 		uint16ou uiPreviousFlags = sfTestFlags.AssignFlagsByMask(g_uiTestMask16, g_uiTestMask16);
 
-		const uint16ou uiNewFlags = g_uiTestValue16 & ~g_uiTestMask16 | g_uiTestMask16;
+		const uint16ou uiNewFlags = (g_uiTestValue16 & ~g_uiTestMask16) | g_uiTestMask16;
 
 		if (uiPreviousFlags != g_uiTestValue16 || sfTestFlags.QueryFlagsAllValues() != uiNewFlags)
 		{
@@ -4696,7 +4696,7 @@ bool TestSimpleFlags16_AssignFlagsByMask()
 		uint16ou uiYetAnotherPreviousFlags = sfTestFlags.AssignFlagsByMask(g_uiTestMask16, g_uiTestMask16 & g_uiTestValue16);
 		OU_ASSERT((g_uiTestMask16 & g_uiTestValue16) != 0); // Test degeneration
 		
-		const uint16ou uiYetAnotherNewFlags = uiAnotherNewFlags & ~g_uiTestMask16 | (g_uiTestMask16 & g_uiTestValue16);
+		const uint16ou uiYetAnotherNewFlags = (uiAnotherNewFlags & ~g_uiTestMask16) | (g_uiTestMask16 & g_uiTestValue16);
 		OU_ASSERT(uiYetAnotherNewFlags != OU_UINT16_MAX); // Test degeneration
 		
 		if (uiYetAnotherPreviousFlags != uiAnotherNewFlags || sfTestFlags.QueryFlagsAllValues() != uiYetAnotherNewFlags)
@@ -4721,7 +4721,7 @@ bool TestSimpleFlags16_AlterFlagsByMask()
 		
 		bool bWasModification = sfTestFlags.AlterFlagsByMask(g_uiTestMask16, g_uiTestMask16);
 		
-		const uint16ou uiNewFlags = g_uiTestValue16 & ~g_uiTestMask16 | g_uiTestMask16;
+		const uint16ou uiNewFlags = (g_uiTestValue16 & ~g_uiTestMask16) | g_uiTestMask16;
 		
 		if (bWasModification != ((g_uiTestValue16 & g_uiTestMask16) != g_uiTestMask16) || sfTestFlags.QueryFlagsAllValues() != uiNewFlags)
 		{
@@ -4747,7 +4747,7 @@ bool TestSimpleFlags16_AlterFlagsByMask()
 		bool bWasYetAnotherModification = sfTestFlags.AlterFlagsByMask(g_uiTestMask16, g_uiTestMask16 & g_uiTestValue16);
 		OU_ASSERT((g_uiTestMask16 & g_uiTestValue16) != 0); // Test degeneration
 		
-		const uint16ou uiYetAnotherNewFlags = uiAnotherNewFlags & ~g_uiTestMask16 | (g_uiTestMask16 & g_uiTestValue16);
+		const uint16ou uiYetAnotherNewFlags = (uiAnotherNewFlags & ~g_uiTestMask16) | (g_uiTestMask16 & g_uiTestValue16);
 		OU_ASSERT(uiYetAnotherNewFlags != OU_UINT16_MAX); // Test degeneration
 		
 		if (bWasYetAnotherModification != ((uiAnotherNewFlags & g_uiTestMask16) != (g_uiTestMask16 & g_uiTestValue16)) || sfTestFlags.QueryFlagsAllValues() != uiYetAnotherNewFlags)
@@ -5802,7 +5802,7 @@ bool TestSimpleFlags8_AssignFlagsByMask()
 
 		uint8ou uiPreviousFlags = sfTestFlags.AssignFlagsByMask(g_uiTestMask8, g_uiTestMask8);
 
-		const uint8ou uiNewFlags = g_uiTestValue8 & ~g_uiTestMask8 | g_uiTestMask8;
+		const uint8ou uiNewFlags = (g_uiTestValue8 & ~g_uiTestMask8) | g_uiTestMask8;
 
 		if (uiPreviousFlags != g_uiTestValue8 || sfTestFlags.QueryFlagsAllValues() != uiNewFlags)
 		{
@@ -5821,7 +5821,7 @@ bool TestSimpleFlags8_AssignFlagsByMask()
 		uint8ou uiYetAnotherPreviousFlags = sfTestFlags.AssignFlagsByMask(g_uiTestMask8, g_uiTestMask8 & g_uiTestValue8);
 		OU_ASSERT((g_uiTestMask8 & g_uiTestValue8) != 0); // Test degeneration
 		
-		const uint8ou uiYetAnotherNewFlags = uiAnotherNewFlags & ~g_uiTestMask8 | (g_uiTestMask8 & g_uiTestValue8);
+		const uint8ou uiYetAnotherNewFlags = (uiAnotherNewFlags & ~g_uiTestMask8) | (g_uiTestMask8 & g_uiTestValue8);
 		OU_ASSERT(uiYetAnotherNewFlags != OU_UINT8_MAX); // Test degeneration
 		
 		if (uiYetAnotherPreviousFlags != uiAnotherNewFlags || sfTestFlags.QueryFlagsAllValues() != uiYetAnotherNewFlags)
@@ -5846,7 +5846,7 @@ bool TestSimpleFlags8_AlterFlagsByMask()
 		
 		bool bWasModification = sfTestFlags.AlterFlagsByMask(g_uiTestMask8, g_uiTestMask8);
 		
-		const uint8ou uiNewFlags = g_uiTestValue8 & ~g_uiTestMask8 | g_uiTestMask8;
+		const uint8ou uiNewFlags = (g_uiTestValue8 & ~g_uiTestMask8) | g_uiTestMask8;
 		
 		if (bWasModification != ((g_uiTestValue8 & g_uiTestMask8) != g_uiTestMask8) || sfTestFlags.QueryFlagsAllValues() != uiNewFlags)
 		{
@@ -5872,7 +5872,7 @@ bool TestSimpleFlags8_AlterFlagsByMask()
 		bool bWasYetAnotherModification = sfTestFlags.AlterFlagsByMask(g_uiTestMask8, g_uiTestMask8 & g_uiTestValue8);
 		OU_ASSERT((g_uiTestMask8 & g_uiTestValue8) != 0); // Test degeneration
 		
-		const uint8ou uiYetAnotherNewFlags = uiAnotherNewFlags & ~g_uiTestMask8 | (g_uiTestMask8 & g_uiTestValue8);
+		const uint8ou uiYetAnotherNewFlags = (uiAnotherNewFlags & ~g_uiTestMask8) | (g_uiTestMask8 & g_uiTestValue8);
 		OU_ASSERT(uiYetAnotherNewFlags != OU_UINT8_MAX); // Test degeneration
 		
 		if (bWasYetAnotherModification != ((uiAnotherNewFlags & g_uiTestMask8) != (g_uiTestMask8 & g_uiTestValue8)) || sfTestFlags.QueryFlagsAllValues() != uiYetAnotherNewFlags)
