@@ -4775,7 +4775,7 @@ bool TestSimpleFlags16_GetFlagsMaskValue()
 			break;
 		}
 		
-		if (sfTestFlags.GetFlagsMaskValue(~g_uiTestValue16))
+		if (sfTestFlags.GetFlagsMaskValue((uint16ou)(~g_uiTestValue16)))
 		{
 			break;
 		}
@@ -5900,7 +5900,7 @@ bool TestSimpleFlags8_GetFlagsMaskValue()
 			break;
 		}
 		
-		if (sfTestFlags.GetFlagsMaskValue(~g_uiTestValue8))
+		if (sfTestFlags.GetFlagsMaskValue((uint8ou)(~g_uiTestValue8)))
 		{
 			break;
 		}
