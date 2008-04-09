@@ -1,7 +1,7 @@
 ifeq ($(OS), Windows_NT)
 
 OS_TYPE = WIN32
-OS_PLATFORM = i386
+OS_PLATFORM := i386
             
 OS_OBJ_EXT = .obj
 OS_LIB_EXT = .lib
@@ -25,7 +25,10 @@ OS_LIB_PRE = lib
 OS_EXE_EXT = 
 
 OS_TYPE = $(subst SunOS,SUN,$(shell uname))
-OS_PLATFORM = $(subst x86_64,i386,$(shell uname -p))
+OS_PLATFORM := $(shell uname -p)
+OS_PLATFORM := $(subst x86_64,i386,$(OS_PLATFORM))
+OS_PLATFORM := $(subst i586,i386,$(OS_PLATFORM))
+OS_PLATFORM := $(subst i686,i386,$(OS_PLATFORM))
 
 FN_RM = $(OS_VP)rm -rf $(1)
 FN_MKDIR = $(OS_VP)test -d $(1) || mkdir -p $(patsubst %/,%,$(1))
