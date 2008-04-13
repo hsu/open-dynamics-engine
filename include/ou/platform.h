@@ -167,12 +167,12 @@
 #define _OU_TARGET_ARCH			_OU_TARGET_ARCH_X86
 
 
-#elif defined(_M_IA64)
+#elif defined(__ia64__) || defined(_M_IA64)
 
 #define _OU_TARGET_ARCH			_OU_TARGET_ARCH_IA64
 
 
-#elif defined(__x86_64__) || defined(_M_X64)
+#elif defined(__x86_64__) || defined(_M_X64) || defined(_M_AMD64)
 
 #define _OU_TARGET_ARCH			_OU_TARGET_ARCH_X64
 
