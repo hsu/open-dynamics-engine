@@ -1030,6 +1030,7 @@ atomicptr _OU_CONVENTION_API AtomicExchangePointer(volatile atomicptr *papDestin
 bool _OU_CONVENTION_API AtomicCompareExchangePointer(volatile atomicptr *papDestination, atomicptr apComparand, atomicptr apExchange);
 
 
+#define __OU_ATOMIC_OPERATIONS_VIA_MUTEXES
 #define __OU_ATOMIC_INITIALIZATION_FUNCTIONS_REQUIRED
 
 // Initialization must be performed from main thread
