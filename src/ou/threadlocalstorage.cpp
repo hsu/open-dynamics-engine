@@ -64,7 +64,7 @@ static CTLSStorageInstance *g_psiStorageGlobalInstance = NULL;
 #if !defined(_OU_TLS_ARRAY_ELEMENT_COUNT)
 
 // Default TLS array element count
-#define _OU_TLS_ARRAY_ELEMENT_COUNT		16
+#define _OU_TLS_ARRAY_ELEMENT_COUNT		8
 
 
 #endif // #if !defined(_OU_TLS_ARRAY_ELEMENT_COUNT)
