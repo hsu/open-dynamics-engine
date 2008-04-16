@@ -9,6 +9,8 @@ Legend
 
 2008/04/16 oleh_derevenko
 
+ [-]  Fixed bug with storage memory not being properly zeroed at allocation.
+
  [*]  Memory customization changed to match assertion failure handler 
       customization. Now it is not necessary to save original pointers,
       just NULL-s are to be assigned to revert from customized to
