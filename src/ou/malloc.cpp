@@ -29,15 +29,37 @@
 #include <ou/customization.h>
 #include <ou/macros.h>
 
+#if _OU_TARGET_OS == _OU_TARGET_OS_MAC
+
+#include <stdlib.h>
+
+
+#else // #if _OU_TARGET_OS != _OU_TARGET_OS_MAC
+
+#include <malloc.h>
+
+
+#endif // #if _OU_TARGET_OS != _OU_TARGET_OS_MAC
+
 
 BEGIN_NAMESPACE_OU();
 
 
 /*extern*/ void *_OU_CONVENTION_API AllocateMemoryBlock(size_t nBlockSize)
 {
+	void *pv_NewBlock;
+
 	CMemoryAllocationProcedure fnMemoryAllocationProcedure = CMemoryManagerCustomization::GetMemoryAllocationCustomProcedure();
-	void *pv_NewBlock = fnMemoryAllocationProcedure(nBlockSize);
-	OU_ASSERT(OU_ALIGNED_SIZE((size_t)pv_NewBlock, _OU_MEMORY_REQUIRED_ALIGNMENT) == (size_t)pv_NewBlock); // Memory must be aligned
+	
+	if (fnMemoryAllocationProcedure)
+	{
+		pv_NewBlock = fnMemoryAllocationProcedure(nBlockSize);
+		OU_ASSERT(OU_ALIGNED_SIZE((size_t)pv_NewBlock, _OU_MEMORY_REQUIRED_ALIGNMENT) == (size_t)pv_NewBlock); // Memory must be aligned
+	}
+	else
+	{
+		pv_NewBlock = malloc(nBlockSize);
+	}
 
 	return pv_NewBlock;
 }
@@ -46,10 +68,20 @@ BEGIN_NAMESPACE_OU();
 {
 	OU_ASSERT(OU_ALIGNED_SIZE((size_t)pv_ExistingBlock, _OU_MEMORY_REQUIRED_ALIGNMENT) == (size_t)pv_ExistingBlock); // Memory must be aligned
 	
+	void *pv_NewBlock;
+
 	CMemoryReallocationProcedure fnMemoryReallocationProcedure = CMemoryManagerCustomization::GetMemoryReallocationCustomProcedure();
-	void *pv_NewBlock = fnMemoryReallocationProcedure(pv_ExistingBlock, nNewBlockSize);
-	OU_ASSERT(OU_ALIGNED_SIZE((size_t)pv_NewBlock, _OU_MEMORY_REQUIRED_ALIGNMENT) == (size_t)pv_NewBlock); // Memory must be aligned
-	
+
+	if (fnMemoryReallocationProcedure)
+	{
+		pv_NewBlock = fnMemoryReallocationProcedure(pv_ExistingBlock, nNewBlockSize);
+		OU_ASSERT(OU_ALIGNED_SIZE((size_t)pv_NewBlock, _OU_MEMORY_REQUIRED_ALIGNMENT) == (size_t)pv_NewBlock); // Memory must be aligned
+	}
+	else
+	{
+		pv_NewBlock = realloc(pv_ExistingBlock, nNewBlockSize);
+	}
+
 	return pv_NewBlock;
 }
 
@@ -58,7 +90,15 @@ BEGIN_NAMESPACE_OU();
 	OU_ASSERT(OU_ALIGNED_SIZE((size_t)pv_ExistingBlock, _OU_MEMORY_REQUIRED_ALIGNMENT) == (size_t)pv_ExistingBlock); // Memory must be aligned
 
 	CMemoryDeallocationProcedure fnMemoryDeallocationProcedure = CMemoryManagerCustomization::GetMemoryDeallocationCustomProcedure();
-	fnMemoryDeallocationProcedure(pv_ExistingBlock);
+
+	if (fnMemoryDeallocationProcedure)
+	{
+		fnMemoryDeallocationProcedure(pv_ExistingBlock);
+	}
+	else
+	{
+		free(pv_ExistingBlock);
+	}
 }
 
 

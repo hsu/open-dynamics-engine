@@ -7,6 +7,13 @@ Legend
  [!]  An important note
 =======================
 
+2008/04/16 oleh_derevenko
+
+ [*]  Memory customization changed to match assertion failure handler 
+      customization. Now it is not necessary to save original pointers,
+      just NULL-s are to be assigned to revert from customized to
+      default memory menager.
+      
 2008/04/08 oleh_derevenko
 
  [!]  Licensing changed: permission to distribute/use library under zlib/libpng

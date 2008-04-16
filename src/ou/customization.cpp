@@ -26,18 +26,6 @@
 
 #include <ou/customization.h>
 
-#if _OU_TARGET_OS == _OU_TARGET_OS_MAC
-
-#include <stdlib.h>
-
-
-#else // #if _OU_TARGET_OS != _OU_TARGET_OS_MAC
-
-#include <malloc.h>
-
-
-#endif // #if _OU_TARGET_OS != _OU_TARGET_OS_MAC
-
 
 BEGIN_NAMESPACE_OU();
 
@@ -67,25 +55,9 @@ extern const unsigned int __LINE__ = 0;
 
 //////////////////////////////////////////////////////////////////////////
 
-static void *_OU_CONVENTION_CALLBACK DefaultMemoryAllocationProcedure(size_t nBlockSize)
-{
-	return malloc(nBlockSize);
-}
-
-static void *_OU_CONVENTION_CALLBACK DefaultMemoryReallocationProcedure(void *pv_ExistingBlock, size_t nBlockNewSize)
-{
-	return realloc(pv_ExistingBlock, nBlockNewSize);
-}
-
-static void _OU_CONVENTION_CALLBACK DefaultMemoryDeallocationProcedure(void *pv_ExistingBlock)
-{
-	free(pv_ExistingBlock);
-}
-
-
-/*extern*/ CMemoryAllocationProcedure CMemoryManagerCustomization::g_fnMemoryAllocationProcedure = &DefaultMemoryAllocationProcedure;
-/*extern*/ CMemoryReallocationProcedure CMemoryManagerCustomization::g_fnMemoryReallocationProcedure = &DefaultMemoryReallocationProcedure;
-/*extern*/ CMemoryDeallocationProcedure CMemoryManagerCustomization::g_fnMemoryDeallocationProcedure = &DefaultMemoryDeallocationProcedure;
+/*extern*/ CMemoryAllocationProcedure CMemoryManagerCustomization::g_fnMemoryAllocationProcedure = NULL;
+/*extern*/ CMemoryReallocationProcedure CMemoryManagerCustomization::g_fnMemoryReallocationProcedure = NULL;
+/*extern*/ CMemoryDeallocationProcedure CMemoryManagerCustomization::g_fnMemoryDeallocationProcedure = NULL;
 
 
 END_NAMESPACE_OU();
