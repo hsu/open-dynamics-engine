@@ -7,6 +7,11 @@ Legend
  [!]  An important note
 =======================
 
+2008/04/19 oleh_derevenko
+
+ [+]  Atomic functions via i486 assembler implementation added (manuall 
+      selection with a preprocessor symbol only).
+ 
 2008/04/16 oleh_derevenko
 
  [-]  Fixed bug with storage memory not being properly zeroed at allocation.

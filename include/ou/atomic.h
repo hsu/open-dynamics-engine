@@ -883,8 +883,160 @@ static _OU_ALWAYSINLINE_PRE void _OU_ALWAYSINLINE_IN _OU_CONVENTION_API
 
 // No atomic functions for generic UNIX
 
+// x86 assembler implementation for i486 must be engaged explicitly
+#if defined(_OU_ATOMIC_USE_X86_ASSEMBLER)
 
-#endif // #if _OU_TARGET_OS == ...
+
+typedef uint32ou atomicord32;
+typedef void *atomicptr;
+
+
+struct _ou_atomic_CLargeStruct
+{ 
+	unsigned int	m_uiData[32];
+};
+
+
+#define __OU_ATOMIC_ORD32_FUNCTIONS_DEFINED
+
+
+static _OU_ALWAYSINLINE_PRE atomicord32 _OU_ALWAYSINLINE_IN _OU_CONVENTION_API 
+/*atomicord32 */AtomicIncrement(volatile atomicord32 *paoDestination)
+{
+	register atomicord32 aoResult = 1;
+
+	asm volatile (
+		"lock; xaddl %2, %0;"
+		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=a" (aoResult)
+		: "1" (aoResult)
+		: "memory");
+
+	return aoResult + 1;
+}
+
+static _OU_ALWAYSINLINE_PRE atomicord32 _OU_ALWAYSINLINE_IN _OU_CONVENTION_API 
+/*atomicord32 */AtomicDecrement(volatile atomicord32 *paoDestination)
+{
+	register atomicord32 aoResult = (atomicord32)(-1);
+
+	asm volatile (
+		"lock; xaddl %2, %0;"
+		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=a" (aoResult)
+		: "1" (aoResult)
+		: "memory");
+
+	return aoResult - 1;
+}
+
+
+static _OU_ALWAYSINLINE_PRE atomicord32 _OU_ALWAYSINLINE_IN _OU_CONVENTION_API 
+/*atomicord32 */AtomicExchange(volatile atomicord32 *paoDestination, atomicord32 aoExchange)
+{
+	register atomicord32 aoResult;
+
+	asm volatile (
+		"xchg %2, %0;"
+		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=a" (aoResult)
+		: "1" (aoExchange)
+		: "memory");
+
+	return aoResult;
+}
+
+static _OU_ALWAYSINLINE_PRE atomicord32 _OU_ALWAYSINLINE_IN _OU_CONVENTION_API 
+/*atomicord32 */AtomicExchangeAdd(volatile atomicord32 *paoDestination, atomicord32 aoAddend)
+{
+	register atomicord32 aoResult;
+
+	asm volatile (
+		"lock; xaddl %2, %0;"
+		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=a" (aoResult)
+		: "1" (aoAddend)
+		: "memory");
+
+	return aoResult;
+}
+
+static _OU_ALWAYSINLINE_PRE bool _OU_ALWAYSINLINE_IN _OU_CONVENTION_API 
+/*bool */AtomicCompareExchange(volatile atomicord32 *paoDestination, atomicord32 aoComparand, atomicord32 aoExchange)
+{
+	register bool bResult;
+
+	asm volatile (
+		"lock; cmpxchgl %3, %0;"
+		"setzb %1;"
+		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=a" (bResult)
+		: "a" (aoComparand), "r" (aoExchange)
+		: "memory");
+
+	return bResult;
+}
+
+
+#define __OU_ATOMIC_BIT_FUNCTIONS_DEFINED
+
+static _OU_ALWAYSINLINE_PRE atomicord32 _OU_ALWAYSINLINE_IN _OU_CONVENTION_API 
+/*atomicord32 */AtomicAnd(volatile atomicord32 *paoDestination, atomicord32 aoBitMask)
+{
+	register atomicord32 aoResult;
+	register atomicord32 aoExchange;
+
+	asm volatile (
+	"0:;"
+		"movl  %4, %2;"
+		"andl  %3, %2;"
+		"lock; cmpxchgl %2, %0;"
+		"jnz   0;"
+		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=a" (aoResult), "=r" (aoExchange)
+		: "a" (*paoDestination), "g" (aoBitMask), "m" (*paoDestination)
+		: "memory");
+
+	return aoResult;
+}
+
+static _OU_ALWAYSINLINE_PRE atomicord32 _OU_ALWAYSINLINE_IN _OU_CONVENTION_API 
+/*atomicord32 */AtomicOr(volatile atomicord32 *paoDestination, atomicord32 aoBitMask)
+{
+	register atomicord32 aoResult;
+	register atomicord32 aoExchange;
+
+	asm volatile (
+	"0:;"
+		"movl  %4, %2;"
+		"orl   %3, %2;"
+		"lock; cmpxchgl %2, %0;"
+		"jnz   0;"
+		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=a" (aoResult), "=r" (aoExchange)
+		: "a" (*paoDestination), "g" (aoBitMask), "m" (*paoDestination)
+		: "memory");
+
+	return aoResult;
+}
+
+static _OU_ALWAYSINLINE_PRE atomicord32 _OU_ALWAYSINLINE_IN _OU_CONVENTION_API 
+/*atomicord32 */AtomicXor(volatile atomicord32 *paoDestination, atomicord32 aoBitMask)
+{
+	register atomicord32 aoResult;
+	register atomicord32 aoExchange;
+
+	asm volatile (
+	"0:;"
+		"movl  %4, %2;"
+		"xorl  %3, %2;"
+		"lock; cmpxchgl %2, %0;"
+		"jnz   0;"
+		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=a" (aoResult), "=r" (aoExchange)
+		: "a" (*paoDestination), "g" (aoBitMask), "m" (*paoDestination)
+		: "memory");
+
+	return aoResult;
+}
+
+
+#endif // #if defined(_OU_ATOMIC_USE_X86_ASSEMBLER)
+
+
+#endif // #if _OU_TARGET_OS == _OU_TARGET_OS_GENUNIX
 
 
 //////////////////////////////////////////////////////////////////////////
