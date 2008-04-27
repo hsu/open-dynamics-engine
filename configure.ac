@@ -42,7 +42,7 @@ case "$host_os" in
 esac
 
 
-echo "host OS name: $host_os"
+#echo "host OS name: $host_os"
 #TODO: _OU_TARGET_BITS ?
 
 
