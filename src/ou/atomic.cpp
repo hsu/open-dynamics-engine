@@ -31,8 +31,11 @@
 
 BEGIN_NAMESPACE_OU();
 
-	
+
 #if !defined(__OU_ATOMIC_PTR_FUNCTIONS_DEFINED)
+
+//////////////////////////////////////////////////////////////////////////
+// Implementation via mutex locks
 
 #if !defined(__OU_ATOMIC_INITIALIZATION_FUNCTIONS_REQUIRED)
 
