@@ -55,6 +55,9 @@ AC_PROG_INSTALL
 AC_PROG_RANLIB
 AC_PROG_CPP
 AC_PROG_MKDIR_P
+AC_LIBTOOL_WIN32_DLL
+AC_PROG_LIBTOOL
+
 
 # Checks for libraries.
 AC_CHECK_LIB([c], main) # needed for sunos?
