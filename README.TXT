@@ -35,8 +35,8 @@ or LICENSE-ZLIB.TXT for more details.
 
 All contributions are copyright by their owners, but the owners
 automatically transfer unrestricted rights in those changes to the OU
-project, which is released under the dual licenses as indicated. The
-owners can also use the contributions in other projects under other
+project, which is released under the threefold licenses as indicated.
+The owners can also use the contributions in other projects under other
 licenses if they want (including sell them), but they can't prevent
 anyone from releasing the contributions under the threefold OU licenses 
 as part of an OU release.
