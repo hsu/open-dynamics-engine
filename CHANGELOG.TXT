@@ -7,6 +7,10 @@ Legend
  [!]  An important note
 =======================
 
+2008/06/26 oleh_derevenko
+
+ [+]  --disable-asserts option support added for configure.
+ 
 2008/04/19 oleh_derevenko
 
  [+]  Atomic functions via i486 assembler implementation added (manuall 

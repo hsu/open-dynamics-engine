@@ -118,6 +118,14 @@ then
 fi
 CPPFLAGS="$CPPFLAGS -D_OU_NAMESPACE=$OU_NAMESPACE"
 
+AC_ARG_ENABLE([asserts],
+        AS_HELP_STRING([--disable-asserts],
+            [disables debug error checking]),
+        asserts=$enableval,asserts=yes)
+if test x$asserts = xno
+then
+    CPPFLAGS="$CPPFLAGS -DNDEBUG"
+fi
 
 AC_CONFIG_FILES([Makefile
                  include/ou/Makefile
