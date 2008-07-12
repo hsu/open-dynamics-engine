@@ -9,8 +9,6 @@ AC_CANONICAL_HOST
 AC_USE_SYSTEM_EXTENSIONS
 AM_INIT_AUTOMAKE(foreign)
 
-isapple=no
-
 AC_MSG_CHECKING([target OS])
 case "$host_os" in
   cygwin* | mingw*)
@@ -25,7 +23,6 @@ case "$host_os" in
   *apple* | *darwin*)
     targetos=_OU_TARGET_OS_MAC
     AC_MSG_RESULT([darwin])
-    isapple=yes
     ;;
   *sunos*)
     targetos=_OU_TARGET_OS_SUNOS
@@ -91,10 +88,10 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([memset])
 
-if test isapple = yes
+if test $targetos = _OU_TARGET_OS_MAC
 then
     MAC_OS_X_VERSION=1000
-    AC_CHECK_FUNC([OSAtomicIncrement32Barrier], [MAC_OS_X_VERSION=1040])
+    AC_CHECK_FUNC([OSAtomicAdd32Barrier], [MAC_OS_X_VERSION=1040])
     AC_CHECK_FUNC([OSAtomicAnd32OrigBarrier], [MAC_OS_X_VERSION=1050])
     AC_DEFINE_UNQUOTED(MAC_OS_X_VERSION, $MAC_OS_X_VERSION, [Mac OS X version])
 fi
