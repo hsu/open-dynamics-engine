@@ -28,9 +28,331 @@
 #define __OU_ATOMIC_H_INCLUDED
 
 
+/**
+ *	\file
+ *	\brief Definitions of atomic (interlocked) API.
+ *	
+ *	Atomic (interlocked) functions are supposed to provide atomic operations on 
+ *	variables in multi-threaded environment without bringing synchronization objects in.
+ *	Atomic functions can be used for implementing reliable reference counting, advanced
+ *	synchronization objects, complex techniques of relaxed synchronization with minimum
+ *	or no synchronization obejcts' usage.
+ *	
+ *	All atomic functions are implemented as memory barriers.
+ *
+ *	On Windows, QNX, MacOS, AIX, SunOS atomic API is implemented via native OS calls.
+ *	If atomic operation function are not provided (or not fully provided) by target OS,
+ *	the missing operations are implemented with aid of other atomic functions or
+ *	via mutex locks if that is not possible. The array of \c _OU_ATOMIC_MUTEX_COUNT 
+ *	(8 in current version) mutexes is used to decrease probability of several threads 
+ *	being competing for the same mutex lock and resulting necessity to block some 
+ *	of them during operation.
+ *
+ *	All atomic API implementations are inlined, Exceptions are implementations via
+ *	mutex locks for which it is not reasonable to generate inlined code.
+ *
+ *	Atomic functions' prototypes were selected to to provide maximal possible 
+ *	functionality available on all the platforms mentioned above in common. Function
+ *	names were chosen as a mix of Windows and UNIX naming traditions (more closely 
+ *	to Windows though).
+ *
+ *	There are the following groups of API available:
+ *	\li Arithmetic (\c AtomicIncrement, \c AtomicDecrement)
+ *	\li Integer Exchange (\c AtomicExchange, \c AtomicExchangeAdd, \c AtomicCompareExchange)
+ *	\li Bitwise (\c AtomicAnd, \c AtomicOr, \c AtomicXor)
+ *	\li Pointer Exchange (\c AtomicExchangePointer, \c AtomicCompareExchangePointer)
+ *	
+ *	For Arithmetic and Bitwise groups along with \c AtomicExchangeAdd function there
+ *	are "no result" variants available. These are written with \c NoResult suffix 
+ *	after function name and may operate faster on some platforms. However they do not
+ *	provide operation results.
+ *
+ *	Atomic functions of Arithmetic, Integer Exchange and Bitwise groups operate with
+ *	32-bit values regardless if build target address space is 32 or 64 bits wide.
+ *	Pointer Exchange functions operate with pointer type and their argument can be
+ *	both 32 or 64 bit value depending on build target.
+ *
+ *	Generic x86 assembler implementation is provided for i486 and later processors. 
+ *	However it is never automatically selected. You must explicitly define
+ *	\c _OU_ATOMIC_USE_X86_ASSEMBLER symbol in compiler options to select that 
+ *	implementation. The option can only be used if \c _OU_TARGET_OS is equal to 
+ *	\c _OU_TARGET_OS_GENUNIX. If the symbol is defined for any other target, 
+ *	it is silently ignored.
+ *	\warning
+ *	Never use assembler implementation on systems that provide native atomic API!
+ *
+ *	Atomic API may require initialization before first use and finalization on program
+ *	exit. The initialization may be necessary when operating system does not provide
+ *	sufficient functionality to implement all the operations via native calls. However,
+ *	to maintain code portability it is recommended that initialization/finalization
+ *	functions are always called.
+ *
+ *	API initialization and finalization calls use reference counting mechanism and
+ *	thus may be invoked several times from different subsystems. Initialization and
+ *	finalization is \e not \e thread \e safe and should be performed from main thread
+ *	only.
+ */
+
+
 #include <ou/inttypes.h>
 #include <ou/namespace.h>
 #include <ou/platform.h>
+
+
+/**
+ *	\typedef atomicord32
+ *	\brief An uniform type for 32-bit values to be used as atomic operations' arguments.
+ *
+ *	This type is supposed to be used for all the variables that store atomic values.
+ *	The word "int" was by intent avoided in its name to emphasize that the type
+ *	needs not necessary to be a signed integer. It might be either signed or unsigned 
+ *	depending on target platform. The only information which could be relied on is
+ *	that the type will always be 32 bit wide, regardless if target platform is a
+ *	32 or 64-bit one.
+ *
+ *	Any arithmetic operations should be avoided with type \c atomicord32. 
+ *	Instead, the wrapper functions should be used to access the value. The function should 
+ *	cast value type to \c atomicord32 in parameters and cast result back to value type.
+ *	\code
+ *		int ExchangeValue(volatile atomicord32 *paoDestination, int iExchange)
+ *		{
+ *			return (int)AtomicExchange(paoDestination, (atomicord32)iExchange);
+ *		}
+ *	\endcode
+ *	\see atomicptr
+ */
+
+/**
+ *	\typedef atomicptr
+ *	\brief An uniform type for pointer values to be used as atomic operations' arguments
+ *
+ *	The type is to be used for those function which operate with pointers rather
+ *	than integers. The size of \c atomicptr is platform dependent, just like the
+ *	size of the pointer and equals 4 bytes on 32-bit platforms and 8 bytes on 64-bit ones.
+ *	\see atomicord32
+ */
+
+/**
+ *	\fn atomicord32 _OU_CONVENTION_API AtomicIncrement(volatile atomicord32 *paoDestination)
+ *	\brief Increments the destination and returns its new value.
+ *	\param paoDestination A pointer to a variable to be incremented.
+ *	\return A value of variable pointer to by \a paoDestination after the increment.
+ *
+ *	The function implements functionality of \c InterlockedIncrement from Win32 API.
+ *	It is most commonly used for reference counting.
+ *	\see AtomicDecrement
+ */
+
+/**
+ *	\fn atomicord32 _OU_CONVENTION_API AtomicDecrement(volatile atomicord32 *paoDestination)
+ *	\brief Decrements the destination and returns its new value.
+ *	\param paoDestination A pointer to a variable to be decremented.
+ *	\return A value of variable pointer to by \a paoDestination after the decrement.
+ *
+ *	The function implements functionality of \c InterlockedDecrement from Win32 API.
+ *	It is most commonly used for reference counting.
+ *	\see AtomicIncrement
+ */
+
+/**
+ *	\fn atomicord32 _OU_CONVENTION_API AtomicExchange(volatile atomicord32 *paoDestination, atomicord32 aoExchange)
+ *	\brief Stores new value in destination and returns old value of destination.
+ *	\param paoDestination A pointer to a variable the data is to be exchanged with.
+ *	\param aoExchange A value to be used for exchange. 
+ *	\return Previous value of variable pointer to by \a paoDestination.
+ *
+ *	The function performs atomic exchange of \a aoExchange value with memory location 
+ *	pointer to by \a paoDestination. Most common uses are relaxed synchronization
+ *	and shared value extraction.
+ *	\see AtomicCompareExchange
+ */
+
+/**
+ *	\fn atomicord32 _OU_CONVENTION_API AtomicExchangeAdd(volatile atomicord32 *paoDestination, atomicord32 aoAddend)
+ *	\brief Assigns sum of addend and existing destination value to the destination 
+ *	and returns original value of destination.
+ *	\param paoDestination A pointer to a variable the value is to be added to.
+ *	\param aoAddend An addend to be used in operation.
+ *	\return Original value of variable pointer to by \a paoDestination.
+ *
+ *	The function computes sum of \a aoAddend and location pointer to by \a paoDestination
+ *	stores it in the location and returns original value instead. The function is 
+ *	close to both exchange and increment groups by semantics but it has been
+ *	put into exchange group because it returns original value of the destination.
+ *	Also, the function was not named \c AtomicAdd to avoid similarity with \c AtomicAnd.
+ *	One of supposed applications is the resource counting.
+ *	\see AtomicIncrement
+ *	\see AtomicDecrement
+ */
+
+/**
+ *	\fn bool _OU_CONVENTION_API AtomicCompareExchange(volatile atomicord32 *paoDestination, atomicord32 aoComparand, atomicord32 aoExchange)
+ *	\brief Compares comparand with destination and stores a new value if comparand 
+ *	and destination match; returns if the assignment was performed or not.
+ *	\param paoDestination A pointer to a variable the data is to be compared and assigned to.
+ *	\param aoComparand A value to be used for comparison. 
+ *	\param aoExchange A new value to be used for assignment. 
+ *	\return \c true if exchange was performed and \c false otherwise.
+ *
+ *	The function performs comparison of \a aoComparand value with the value pointed
+ *	by \a paoDestination. If the values match an \a aoExchange is assigned to 
+ *	destination location. If values do not match, the restination remains unchanged.
+ *	Function returns boolean status whether the match and assignment occurred or not.
+ *	The most common uses are relaxed synchronization and construction of LIFO lists.
+ *	\see AtomicExchange
+ */
+
+/**
+ *	\fn atomicord32 _OU_CONVENTION_API AtomicAnd(volatile atomicord32 *paoDestination, atomicord32 aoBitMask)
+ *	\brief Applies a mask with bitwise AND to the destination and returns original 
+ *	value of destination.
+ *	\param paoDestination A pointer to a variable the bitmask is to be applied to.
+ *	\param aoBitMask A bitmask to be used in operation.
+ *	\return Original value of variable pointed to by \a paoDestination.
+ *
+ *	\c AtomicAnd updates variable pointed to by \a paoDestination with result of
+ *	 bitwise AND of \a aoBitMask and existing \a paoDestination target. The result 
+ *	is original value that was pointer to by \a paoDestination before the operation
+ *	was performed. Common applications are object state manipulations.
+ *	\see AtomicOr
+ *	\see AtomicXor
+ */
+
+/**
+ *	\fn atomicord32 _OU_CONVENTION_API AtomicOr(volatile atomicord32 *paoDestination, atomicord32 aoBitMask)
+ *	\brief Applies a mask with bitwise OR to the destination and returns original 
+ *	value of destination.
+ *	\param paoDestination A pointer to a variable the bitmask is to be applied to.
+ *	\param aoBitMask A bitmask to be used in operation.
+ *	\return Original value of variable pointed to by \a paoDestination.
+ *
+ *	\c AtomicOr updates variable pointed to by \a paoDestination with result of
+ *	 bitwise OR of \a aoBitMask and existing \a paoDestination target. The result 
+ *	is original value that was pointer to by \a paoDestination before the operation 
+ *	was performed. Common applications are object state manipulations.
+ *	\see AtomicAnd
+ *	\see AtomicXor
+ */
+
+/**
+ *	\fn atomicord32 _OU_CONVENTION_API AtomicXor(volatile atomicord32 *paoDestination, atomicord32 aoBitMask)
+ *	\brief Applies a mask with bitwise XOR to the destination and returns original 
+ *	value of destination.
+ *	\param paoDestination A pointer to a variable the bitmask is to be applied to.
+ *	\param aoBitMask A bitmask to be used in operation.
+ *	\return Original value of variable pointed to by \a paoDestination.
+ *
+ *	\c AtomicXor updates variable pointed to by \a paoDestination with result of
+ *	 bitwise XOR of \a aoBitMask and existing \a paoDestination target. The result 
+ *	is original value that was pointer to by \a paoDestination before the operation 
+ *	was performed. Common applications are object state manipulations.
+ *	\see AtomicAnd
+ *	\see AtomicOr
+ */
+
+/**
+ *	\fn atomicptr _OU_CONVENTION_API AtomicExchangePointer(volatile atomicptr *papDestination, atomicptr apExchange)
+ *	\brief The function is identical to \c AtomicExchange except that it operates
+ *	with pointers rather than 32-bit integers.
+ *	\see AtomicExchange
+ */
+
+/**
+ *	\fn bool _OU_CONVENTION_API AtomicCompareExchangePointer(volatile atomicptr *papDestination, atomicptr apComparand, atomicptr apExchange)
+ *	\brief The function is identical to \c AtomicCompareExchange except that it operates
+ *	with pointers rather than 32-bit integers.
+ *	\see AtomicCompareExchange
+ */
+
+/**
+ *	\fn void _OU_CONVENTION_API AtomicIncrementNoResult(volatile atomicord32 *paoDestination)
+ *	\brief The function is identical to \c AtomicIncrement but does not return a result.
+ *
+ *	The function implementation can be faster on some platforms and it is recommended
+ *	to use "NoResult" variants in cases when the result of operation or previous value 
+ *	of destination is not used.
+ *	\see AtomicIncrement
+ */
+
+/**
+ *	\fn void _OU_CONVENTION_API AtomicDecrementNoResult(volatile atomicord32 *paoDestination)
+ *	\brief The function is identical to \c AtomicDecrement but does not return a result.
+ *
+ *	The function implementation can be faster on some platforms and it is recommended
+ *	to use "NoResult" variants in cases when the result of operation or previous value 
+ *	of destination is not used.
+ *	\see AtomicDecrement
+ */
+
+/**
+ *	\fn void _OU_CONVENTION_API AtomicExchangeAddNoResult(volatile atomicord32 *paoDestination, atomicord32 aoAddend)
+ *	\brief The function is identical to \c AtomicExchangeAdd but does not return a result.
+ *
+ *	The function implementation can be faster on some platforms and it is recommended
+ *	to use "NoResult" variants in cases when the result of operation or previous value 
+ *	of destination is not used.
+ *	\see AtomicExchangeAdd
+ */
+
+/**
+ *	\fn void _OU_CONVENTION_API AtomicAndNoResult(volatile atomicord32 *paoDestination, atomicord32 aoBitMask)
+ *	\brief The function is identical to \c AtomicAnd but does not return a result.
+ *
+ *	The function implementation can be faster on some platforms and it is recommended
+ *	to use "NoResult" variants in cases when the result of operation or previous value 
+ *	of destination is not used.
+ *	\see AtomicAnd
+ */
+
+/**
+ *	\fn void _OU_CONVENTION_API AtomicOrNoResult(volatile atomicord32 *paoDestination, atomicord32 aoBitMask)
+ *	\brief The function is identical to \c AtomicOr but does not return a result.
+ *
+ *	The function implementation can be faster on some platforms and it is recommended
+ *	to use "NoResult" variants in cases when the result of operation or previous value 
+ *	of destination is not used.
+ *	\see AtomicOr
+ */
+
+/**
+ *	\fn void _OU_CONVENTION_API AtomicXorNoResult(volatile atomicord32 *paoDestination, atomicord32 aoBitMask)
+ *	\brief The function is identical to \c AtomicXor but does not return a result.
+ *
+ *	The function implementation can be faster on some platforms and it is recommended
+ *	to use "NoResult" variants in cases when the result of operation or previous value 
+ *	of destination is not used.
+ *	\see AtomicXor
+ */
+
+/**
+ *	\fn bool _OU_CONVENTION_API InitializeAtomicAPI()
+ *	\brief Performs initialization tasks to allow using atomic functions.
+ *	\return Boolean initialization status.
+ *
+ *	The function is required to be called before first use of atomic functions.
+ *	The initialization uses reference counting, so multiple calls to \c InitializeAtomicAPI
+ *	are allowed. However the counter is not thread safe. Therefore it is recommended
+ *	that the function is always called from main thread on program startup or
+ *	library initialization.
+ *
+ *	The function returns initialization status. If initialization succeeds, 
+ *	\c FinalizeAtomicAPI is to be called for each call to \c InitializeAtomicAPI after
+ *	atomic functions are not needed any more. If \c InitializeAtomicAPI returns 
+ *	\c false, the atomic functions may not be used and \c FinalizeAtomicAPI must not be called.
+ *	\see FinalizeAtomicAPI
+ */
+
+/**
+ *	\fn void _OU_CONVENTION_API FinalizeAtomicAPI()
+ *	\brief Finalizes objects and frees the memory that might be used to provide 
+ *	functionality of atomic functions.
+ *
+ *	The function is to be called on program exit or library client detach to 
+ *	release resources that might be allocated to support functionality of Atomic... 
+ *	functions. The function must be called once for every successful call to 
+ *	\c InitializeAtomicAPI. \c FinalizeAtomicAPI can not fail.
+ *	\see InitializeAtomicAPI
+ */
 
 
 BEGIN_NAMESPACE_OU();
@@ -1182,6 +1504,20 @@ atomicptr _OU_CONVENTION_API AtomicExchangePointer(volatile atomicptr *papDestin
 bool _OU_CONVENTION_API AtomicCompareExchangePointer(volatile atomicptr *papDestination, atomicptr apComparand, atomicptr apExchange);
 
 
+#if defined(__OU_DOXYGEN__) 
+
+// Doxygen fooling declarations (used for documentation generation only)
+void _OU_CONVENTION_API AtomicIncrementNoResult(volatile atomicord32 *paoDestination);
+void _OU_CONVENTION_API AtomicDecrementNoResult(volatile atomicord32 *paoDestination);
+void _OU_CONVENTION_API AtomicExchangeAddNoResult(volatile atomicord32 *paoDestination, atomicord32 aoAddend);
+void _OU_CONVENTION_API AtomicAndNoResult(volatile atomicord32 *paoDestination, atomicord32 aoBitMask);
+void _OU_CONVENTION_API AtomicOrNoResult(volatile atomicord32 *paoDestination, atomicord32 aoBitMask);
+void _OU_CONVENTION_API AtomicXorNoResult(volatile atomicord32 *paoDestination, atomicord32 aoBitMask);
+
+
+#endif // #if defined(__OU_DOXYGEN__)
+
+
 #define __OU_ATOMIC_OPERATIONS_VIA_MUTEXES
 #define __OU_ATOMIC_INITIALIZATION_FUNCTIONS_REQUIRED
 
@@ -1261,6 +1597,7 @@ static _OU_INLINE void _OU_CONVENTION_API FinalizeAtomicAPI()
 
 
 END_NAMESPACE_OU();
+
 
 
 #endif // #ifndef __OU_ATOMIC_H_INCLUDED
