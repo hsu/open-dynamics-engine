@@ -29,6 +29,7 @@
 #include <ou/atomic.h>
 #include <ou/simpleflags.h>
 #include <ou/malloc.h>
+#include <ou/templates.h>
 #include <ou/inttypes.h>
 
 #include <string.h>
@@ -56,9 +57,31 @@ BEGIN_NAMESPACE_OU();
 
 class CTLSStorageInstance;
 
+enum ESTORAGEINSTANCEKIND
+{
+	SIK__MIN,
+
+	SIK_AUTOCLEANUP = SIK__MIN,
+	SIK_MANUALCLEANUP,
+
+	SIK__MAX,
+};
+
 
 static unsigned int g_uiThreadLocalStorageInitializationCount = 0;
-static CTLSStorageInstance *g_psiStorageGlobalInstance = NULL;
+static CTLSStorageInstance *g_apsiStorageGlobalInstances[SIK__MAX] = { NULL };
+static HTLSKEYVALUE g_ahkvStorageGlobalKeyValues[SIK__MAX] = { NULL };
+
+
+static inline size_t DecodeInstanceKindFromKeySelector(const HTLSKEYSELECTOR &hksKeySelector)
+{
+	return (HTLSKEYSELECTOR::value_type)hksKeySelector - g_ahkvStorageGlobalKeyValues;
+}
+
+static inline HTLSKEYSELECTOR EncodeKeySelectorFromStorageKind(ESTORAGEINSTANCEKIND ikInstanceKind)
+{
+	return g_ahkvStorageGlobalKeyValues + ikInstanceKind;
+}
 
 
 #if !defined(_OU_TLS_ARRAY_ELEMENT_COUNT)
@@ -251,13 +274,13 @@ protected:
 	~CTLSStorageInstance();
 
 public:
-	bool Init();
+	bool Init(ESTORAGEINSTANCEKIND ikInstanceKind);
 
 private:
 	void Finit();
 
 public:
-	inline const HTLSKEY &RetrieveStorageKey() const { return GetStorageKey(); }
+	inline const HTLSKEYVALUE &RetrieveStorageKey() const { return GetStorageKey(); }
 	inline tlsindextype RetrieveValueCount() const { return GetValueCount(); }
 	inline unsigned int RetrieveInitializationFlags() const { return GetInitializationFlags(); }
 	
@@ -279,12 +302,13 @@ private:
 	void AddStorageArrayToArrayList(CTLSStorageArray *psaStorageArray);
 
 private:
-	static bool AllocateStorageKey(HTLSKEY &hskOutStorageKey);
-	static void FreeStorageKey(const HTLSKEY &hskStorageKey);
+	static bool AllocateStorageKey(HTLSKEYVALUE &hkvOutStorageKey, ESTORAGEINSTANCEKIND ikInstanceKind);
+	static void FreeStorageKey(const HTLSKEYVALUE &hkvStorageKey);
 
 #if _OU_TARGET_OS != _OU_TARGET_OS_WINDOWS
 
-	static void FreeStorageBlock_Callback(void *pv_DataValue);
+	static void FreeStorageBlock_Callback_Automatic(void *pv_DataValue);
+	static void FreeStorageBlock_Callback_Manual(void *pv_DataValue);
 
 
 #endif // #if _OU_TARGET_OS != _OU_TARGET_OS_WINDOWS
@@ -305,8 +329,8 @@ private:
 		return (CTLSStorageArray *)m_psaStorageList;
 	}
 
-	inline void SetStorageKey(const HTLSKEY &hskValue) { m_hskStorageKey = hskValue; }
-	inline const HTLSKEY &GetStorageKey() const { return m_hskStorageKey; }
+	inline void SetStorageKey(const HTLSKEYVALUE &hskValue) { m_hskStorageKey = hskValue; }
+	inline const HTLSKEYVALUE &GetStorageKey() const { return m_hskStorageKey; }
 
 	inline tlsindextype GetValueCount() const { return m_iValueCount; }
 
@@ -332,7 +356,7 @@ private:
 
 private:
 	volatile atomicptr	m_psaStorageList; // CTLSStorageArray *
-	HTLSKEY				m_hskStorageKey;
+	HTLSKEYVALUE		m_hskStorageKey;
 	CSimpleFlags		m_sfInstanceFlags;
 	tlsindextype		m_iValueCount;
 };
@@ -808,7 +832,7 @@ void CTLSStorageInstance::FreeInstance()
 
 CTLSStorageInstance::CTLSStorageInstance(tlsindextype iValueCount, unsigned int uiInitializationFlags):
 	m_psaStorageList((atomicptr)0),
-	m_hskStorageKey((HTLSKEY::value_type)0),
+	m_hskStorageKey((HTLSKEYVALUE::value_type)0),
 	m_iValueCount(iValueCount)
 {
 	SetInitializationFlags(uiInitializationFlags);
@@ -820,16 +844,16 @@ CTLSStorageInstance::~CTLSStorageInstance()
 }
 
 
-bool CTLSStorageInstance::Init()
+bool CTLSStorageInstance::Init(ESTORAGEINSTANCEKIND ikInstanceKind)
 {
 	bool bResult = false;
 
 	bool bKeyAllocationResult = false;
-	HTLSKEY hskStorageKey;
+	HTLSKEYVALUE hkvStorageKey;
 	
 	do
 	{
-		if (!AllocateStorageKey(hskStorageKey))
+		if (!AllocateStorageKey(hkvStorageKey, ikInstanceKind))
 		{
 			break;
 		}
@@ -843,7 +867,7 @@ bool CTLSStorageInstance::Init()
 			break;
 		}
 
-		SetStorageKey(hskStorageKey);
+		SetStorageKey(hkvStorageKey);
 		SetStorageKeyValidFlag();
 		AddStorageArrayToArrayList(psaFirstStorageArray);
 
@@ -855,7 +879,7 @@ bool CTLSStorageInstance::Init()
 	{
 		if (bKeyAllocationResult)
 		{
-			FreeStorageKey(hskStorageKey);
+			FreeStorageKey(hkvStorageKey);
 		}
 	}
 	
@@ -876,8 +900,8 @@ void CTLSStorageInstance::Finit()
 
 	if (GetStorageKeyValidFlag())
 	{
-		const HTLSKEY &hskStorageKey = GetStorageKey();
-		FreeStorageKey(hskStorageKey);
+		const HTLSKEYVALUE &hkvStorageKey = GetStorageKey();
+		FreeStorageKey(hkvStorageKey);
 
 		ResetStorageKeyValidFlag();
 	}
@@ -999,7 +1023,7 @@ void CTLSStorageInstance::AddStorageArrayToArrayList(CTLSStorageArray *psaStorag
 }
 
 
-bool CTLSStorageInstance::AllocateStorageKey(HTLSKEY &hskOutStorageKey)
+bool CTLSStorageInstance::AllocateStorageKey(HTLSKEYVALUE &hkvOutStorageKey, ESTORAGEINSTANCEKIND ikInstanceKind)
 {
 	bool bResult = false;
 
@@ -1009,7 +1033,7 @@ bool CTLSStorageInstance::AllocateStorageKey(HTLSKEY &hskOutStorageKey)
 
 	if (dwTlsIndex != TLS_OUT_OF_INDEXES)
 	{
-		hskOutStorageKey = (HTLSKEY)(HTLSKEY::value_type)(size_t)dwTlsIndex;
+		hkvOutStorageKey = (HTLSKEYVALUE)(HTLSKEYVALUE::value_type)(size_t)dwTlsIndex;
 		bResult = true;
 	}
 	
@@ -1018,10 +1042,11 @@ bool CTLSStorageInstance::AllocateStorageKey(HTLSKEY &hskOutStorageKey)
 	
 	pthread_key_t pkThreadKey;
 
-	int iKeyCreationResult = pthread_key_create(&pkThreadKey, &CTLSStorageInstance::FreeStorageBlock_Callback);
+	int iKeyCreationResult = pthread_key_create(&pkThreadKey, 
+		(ikInstanceKind == SIK_AUTOCLEANUP) ? &CTLSStorageInstance::FreeStorageBlock_Callback_Automatic : &CTLSStorageInstance::FreeStorageBlock_Callback_Manual);
 	if (iKeyCreationResult == EOK)
 	{
-		hskOutStorageKey = (HTLSKEY)(HTLSKEY::value_type)(size_t)pkThreadKey;
+		hkvOutStorageKey = (HTLSKEYVALUE)(HTLSKEYVALUE::value_type)(size_t)pkThreadKey;
 		bResult = true;
 	}
 	
@@ -1031,11 +1056,11 @@ bool CTLSStorageInstance::AllocateStorageKey(HTLSKEY &hskOutStorageKey)
 	return bResult;
 }
 
-void CTLSStorageInstance::FreeStorageKey(const HTLSKEY &hskStorageKey)
+void CTLSStorageInstance::FreeStorageKey(const HTLSKEYVALUE &hkvStorageKey)
 {
 #if _OU_TARGET_OS == _OU_TARGET_OS_WINDOWS
 	
-	DWORD dwTlsIndex = (DWORD)(size_t)(HTLSKEY::value_type)hskStorageKey;
+	DWORD dwTlsIndex = (DWORD)(size_t)(HTLSKEYVALUE::value_type)hkvStorageKey;
 	OU_ASSERT(dwTlsIndex != TLS_OUT_OF_INDEXES);
 
 	BOOL bIndexFreeingResult = ::TlsFree(dwTlsIndex);
@@ -1044,7 +1069,7 @@ void CTLSStorageInstance::FreeStorageKey(const HTLSKEY &hskStorageKey)
 	
 #else // #if _OU_TARGET_OS != _OU_TARGET_OS_WINDOWS
 	
-	pthread_key_t pkThreadKey = (pthread_key_t)(size_t)(HTLSKEY::value_type)hskStorageKey;
+	pthread_key_t pkThreadKey = (pthread_key_t)(size_t)(HTLSKEYVALUE::value_type)hkvStorageKey;
 	
 	int iKeyDeletionResult = pthread_key_delete(pkThreadKey);
 	OU_VERIFY(iKeyDeletionResult == EOK);
@@ -1056,13 +1081,23 @@ void CTLSStorageInstance::FreeStorageKey(const HTLSKEY &hskStorageKey)
 
 #if _OU_TARGET_OS != _OU_TARGET_OS_WINDOWS
 
-void CTLSStorageInstance::FreeStorageBlock_Callback(void *pv_DataValue)
+void CTLSStorageInstance::FreeStorageBlock_Callback_Automatic(void *pv_DataValue)
 {
 	if (pv_DataValue) // Just a precaution
 	{
 		CTLSStorageBlock *psbStorageBlock = (CTLSStorageBlock *)pv_DataValue;
 
-		g_psiStorageGlobalInstance->FreeStorageBlock(psbStorageBlock);
+		g_apsiStorageGlobalInstances[SIK_AUTOCLEANUP]->FreeStorageBlock(psbStorageBlock);
+	}
+}
+
+void CTLSStorageInstance::FreeStorageBlock_Callback_Manual(void *pv_DataValue)
+{
+	if (pv_DataValue) // Just a precaution
+	{
+		CTLSStorageBlock *psbStorageBlock = (CTLSStorageBlock *)pv_DataValue;
+
+		g_apsiStorageGlobalInstances[SIK_MANUALCLEANUP]->FreeStorageBlock(psbStorageBlock);
 	}
 }
 
@@ -1104,14 +1139,17 @@ void CTLSStorageInstance::FreeStorageArrayList(CTLSStorageArray *psaStorageArray
 //////////////////////////////////////////////////////////////////////////
 // CThreadLocalStorage methods
 
-bool CThreadLocalStorage::AllocateAndSetStorageValue(
+bool CThreadLocalStorage::AllocateAndSetStorageValue(const HTLSKEYSELECTOR &hksKeySelector,
 	tlsindextype iValueIndex, tlsvaluetype vValueData, CTLSValueDestructor fnValueDestructor)
 {
+	OU_ASSERT(OU_IN_SIZET_RANGE(DecodeInstanceKindFromKeySelector(hksKeySelector), SIK__MIN, SIK__MAX));
+
 	bool bResult = false;
 	
 	do
 	{
-		CTLSStorageInstance *psiStorageInstance = g_psiStorageGlobalInstance;
+		ESTORAGEINSTANCEKIND ikInstanceKind = (ESTORAGEINSTANCEKIND)DecodeInstanceKindFromKeySelector(hksKeySelector);
+		CTLSStorageInstance *psiStorageInstance = g_apsiStorageGlobalInstances[ikInstanceKind];
 
 		CTLSStorageBlock *psbStorageBlock;
 
@@ -1120,8 +1158,7 @@ bool CThreadLocalStorage::AllocateAndSetStorageValue(
 			break;
 		}
 
-		const HTLSKEY &hskStorageKey = psiStorageInstance->RetrieveStorageKey();
-		SetKeyStorageBlock(hskStorageKey, psbStorageBlock);
+		SetKeyStorageBlock(hksKeySelector, psbStorageBlock);
 
 		psbStorageBlock->SetValueData(iValueIndex, vValueData);
 		psbStorageBlock->SetValueDestructor(iValueIndex, fnValueDestructor);
@@ -1148,7 +1185,9 @@ bool CTLSInitialization::InitializeTLSAPI(HTLSKEY &hskOutStorageKey, tlsindextyp
 
 	do
 	{
-		if (g_uiThreadLocalStorageInitializationCount == 0U) // Initialization/finalization must be called from main thread
+		const ESTORAGEINSTANCEKIND ikInstanceKind = (uiInitializationFlags & SIF_MANUAL_CLEANUP_ON_THREAD_EXIT) ? SIK_MANUALCLEANUP : SIK_AUTOCLEANUP;
+
+		if (g_apsiStorageGlobalInstances[ikInstanceKind] == NULL) // Initialization/finalization must be called from main thread
 		{
 			if (!InitializeAtomicAPI())
 			{
@@ -1157,17 +1196,20 @@ bool CTLSInitialization::InitializeTLSAPI(HTLSKEY &hskOutStorageKey, tlsindextyp
 
 			bAtomicAPIInitialized = true;
 
-			if (!InitializeTLSAPIValidated(iValueCount, uiInitializationFlags))
+			if (!InitializeTLSAPIValidated(ikInstanceKind, iValueCount, uiInitializationFlags))
 			{
 				break;
 			}
+
+			const HTLSKEYVALUE &hkvStorageKey = g_apsiStorageGlobalInstances[ikInstanceKind]->RetrieveStorageKey();
+			g_ahkvStorageGlobalKeyValues[ikInstanceKind] = hkvStorageKey;
 		}
 
 		++g_uiThreadLocalStorageInitializationCount;
 	
-		hskOutStorageKey = g_psiStorageGlobalInstance->RetrieveStorageKey();
-		OU_ASSERT(iValueCount == g_psiStorageGlobalInstance->RetrieveValueCount());
-		OU_ASSERT(uiInitializationFlags == g_psiStorageGlobalInstance->RetrieveInitializationFlags());
+		hskOutStorageKey = EncodeKeySelectorFromStorageKind(ikInstanceKind);
+		OU_ASSERT(iValueCount == g_apsiStorageGlobalInstances[ikInstanceKind]->RetrieveValueCount());
+		OU_ASSERT(uiInitializationFlags == g_apsiStorageGlobalInstances[ikInstanceKind]->RetrieveInitializationFlags());
 
 		bResult = true;
 	}
@@ -1188,29 +1230,39 @@ void CTLSInitialization::FinalizeTLSAPI()
 {
 	OU_ASSERT(g_uiThreadLocalStorageInitializationCount != 0U);
 
-	if (--g_uiThreadLocalStorageInitializationCount == 0U) // Initialization/finalization must be called from main thread
+	ESTORAGEINSTANCEKIND ikInstanceKind = 
+		(--g_uiThreadLocalStorageInitializationCount == 0U) ? SIK__MIN : SIK__MAX; // Initialization/finalization must be called from main thread
+	for (; ikInstanceKind != SIK__MAX; ++ikInstanceKind) 
 	{
-		FinalizeTLSAPIValidated();
+		if (g_apsiStorageGlobalInstances[ikInstanceKind])
+		{
+			g_ahkvStorageGlobalKeyValues[ikInstanceKind] = 0;
 
-		FinalizeAtomicAPI();
+			FinalizeTLSAPIValidated(ikInstanceKind);
+
+			FinalizeAtomicAPI();
+		}
 	}
 }
 
 
 void CTLSInitialization::CleanupOnThreadExit()
 {
-	CTLSStorageInstance *psiStorageInstance = g_psiStorageGlobalInstance;
+	const ESTORAGEINSTANCEKIND ikInstanceKind = SIK_MANUALCLEANUP;
+	CTLSStorageInstance *psiStorageInstance = g_apsiStorageGlobalInstances[ikInstanceKind];
 
-	if (psiStorageInstance->GetIsThreadManualCleanup())
+	if (psiStorageInstance != NULL)
 	{
-		const HTLSKEY &hskStorageKey = g_psiStorageGlobalInstance->RetrieveStorageKey();
-		CTLSStorageBlock *psbStorageBlock = CThreadLocalStorage::GetKeyStorageBlock(hskStorageKey);
+		OU_ASSERT(psiStorageInstance->GetIsThreadManualCleanup());
+
+		const HTLSKEYSELECTOR &hksKeySelector = EncodeKeySelectorFromStorageKind(ikInstanceKind);
+		CTLSStorageBlock *psbStorageBlock = CThreadLocalStorage::GetKeyStorageBlock(hksKeySelector);
 		
 		if (psbStorageBlock)
 		{
 			psiStorageInstance->FreeStorageBlockOnThreadExit(psbStorageBlock);
 
-			CThreadLocalStorage::SetKeyStorageBlock(hskStorageKey, NULL);
+			CThreadLocalStorage::SetKeyStorageBlock(hksKeySelector, NULL);
 		}
 	}
 	else
@@ -1220,10 +1272,10 @@ void CTLSInitialization::CleanupOnThreadExit()
 }
 
 
-bool CTLSInitialization::InitializeTLSAPIValidated(tlsindextype iValueCount,
-	unsigned int uiInitializationFlags)
+bool CTLSInitialization::InitializeTLSAPIValidated(unsigned int uiInstanceKind, 
+	tlsindextype iValueCount, unsigned int uiInitializationFlags)
 {
-	OU_ASSERT(g_psiStorageGlobalInstance == NULL);
+	OU_ASSERT(g_apsiStorageGlobalInstances[uiInstanceKind] == NULL);
 
 	bool bResult = false;
 	
@@ -1241,12 +1293,12 @@ bool CTLSInitialization::InitializeTLSAPIValidated(tlsindextype iValueCount,
 			break;
 		}
 
-		if (!psiStorageInstance->Init())
+		if (!psiStorageInstance->Init((ESTORAGEINSTANCEKIND)uiInstanceKind))
 		{
 			break;
 		}
 
-		g_psiStorageGlobalInstance = psiStorageInstance;
+		g_apsiStorageGlobalInstances[uiInstanceKind] = psiStorageInstance;
 	
 		bResult = true;
 	}
@@ -1263,12 +1315,12 @@ bool CTLSInitialization::InitializeTLSAPIValidated(tlsindextype iValueCount,
 	return bResult;
 }
 
-void CTLSInitialization::FinalizeTLSAPIValidated()
+void CTLSInitialization::FinalizeTLSAPIValidated(unsigned int uiInstanceKind)
 {
-	OU_ASSERT(g_psiStorageGlobalInstance != NULL);
+	OU_ASSERT(g_apsiStorageGlobalInstances[uiInstanceKind] != NULL);
 
-	g_psiStorageGlobalInstance->FreeInstance();
-	g_psiStorageGlobalInstance = NULL;
+	g_apsiStorageGlobalInstances[uiInstanceKind]->FreeInstance();
+	g_apsiStorageGlobalInstances[uiInstanceKind] = NULL;
 }
 
 

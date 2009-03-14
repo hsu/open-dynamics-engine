@@ -53,7 +53,9 @@ BEGIN_NAMESPACE_OU();
 //////////////////////////////////////////////////////////////////////////
 // API specific types
 
-typedef CTypeSimpleWrapper<void *, 0> HTLSKEY;
+typedef CTypeSimpleWrapper<void *, 1> HTLSKEYVALUE;
+typedef CTypeSimpleWrapper<HTLSKEYVALUE *, 0> HTLSKEYSELECTOR;
+typedef HTLSKEYSELECTOR HTLSKEY;
 
 typedef void *tlsvaluetype;
 typedef unsigned int tlsindextype;
@@ -178,7 +180,7 @@ public: // Safe methods
 		}
 		else
 		{
-			bResult = AllocateAndSetStorageValue(iValueIndex, vValueData, fnValueDestructor);
+			bResult = AllocateAndSetStorageValue(hskStorageKey, iValueIndex, vValueData, fnValueDestructor);
 		}
 
 		return bResult;
@@ -215,37 +217,37 @@ public: // Unsafe methods
 	}
 
 private:
-	static bool _OU_CONVENTION_API AllocateAndSetStorageValue(
+	static bool _OU_CONVENTION_API AllocateAndSetStorageValue(const HTLSKEYSELECTOR &hksKeySelector,
 		tlsindextype iValueIndex, tlsvaluetype vValueData, CTLSValueDestructor fnValueDestructor);
 	
 private:
 	friend class CTLSInitialization;
 	
-	static inline void _OU_CONVENTION_API SetKeyStorageBlock(const HTLSKEY &hskStorageKey, CTLSStorageBlock *psbInstance)
+	static inline void _OU_CONVENTION_API SetKeyStorageBlock(const HTLSKEYSELECTOR &hskStorageKey, CTLSStorageBlock *psbInstance)
 	{
 #if _OU_TARGET_OS == _OU_TARGET_OS_WINDOWS
 		
-		::TlsSetValue((DWORD)(size_t)(HTLSKEY::value_type)hskStorageKey, (LPVOID)psbInstance);
+		::TlsSetValue((DWORD)(size_t)(HTLSKEYVALUE::value_type)(*(HTLSKEYSELECTOR::value_type)hskStorageKey), (LPVOID)psbInstance);
 		
 		
 #else // #if _OU_TARGET_OS != _OU_TARGET_OS_WINDOWS
 		
-		pthread_setspecific((pthread_key_t)(size_t)(HTLSKEY::value_type)hskStorageKey, (void *)psbInstance);
+		pthread_setspecific((pthread_key_t)(size_t)(HTLSKEYVALUE::value_type)(*(HTLSKEYSELECTOR::value_type)hskStorageKey), (void *)psbInstance);
 		
 		
 #endif // #if _OU_TARGET_OS == ...
 	}
 
-	static inline CTLSStorageBlock *_OU_CONVENTION_API GetKeyStorageBlock(const HTLSKEY &hskStorageKey)
+	static inline CTLSStorageBlock *_OU_CONVENTION_API GetKeyStorageBlock(const HTLSKEYSELECTOR &hskStorageKey)
 	{
 #if _OU_TARGET_OS == _OU_TARGET_OS_WINDOWS
 		
-		CTLSStorageBlock *psbStorageBlock = (CTLSStorageBlock *)::TlsGetValue((DWORD)(size_t)(HTLSKEY::value_type)hskStorageKey);
+		CTLSStorageBlock *psbStorageBlock = (CTLSStorageBlock *)::TlsGetValue((DWORD)(size_t)(HTLSKEYVALUE::value_type)(*(HTLSKEYSELECTOR::value_type)hskStorageKey));
 		
 		
 #else // #if _OU_TARGET_OS != _OU_TARGET_OS_WINDOWS
 		
-		CTLSStorageBlock *psbStorageBlock = (CTLSStorageBlock *)pthread_getspecific((pthread_key_t)(size_t)(HTLSKEY::value_type)hskStorageKey);
+		CTLSStorageBlock *psbStorageBlock = (CTLSStorageBlock *)pthread_getspecific((pthread_key_t)(size_t)(HTLSKEYVALUE::value_type)(*(HTLSKEYSELECTOR::value_type)hskStorageKey));
 		
 		
 #endif // #if _OU_TARGET_OS == ...
@@ -275,9 +277,9 @@ public:
 	static void _OU_CONVENTION_API CleanupOnThreadExit();
 
 private:
-	static bool _OU_CONVENTION_API InitializeTLSAPIValidated(tlsindextype iValueCount,
-		unsigned int uiInitializationFlags);
-	static void _OU_CONVENTION_API FinalizeTLSAPIValidated();
+	static bool _OU_CONVENTION_API InitializeTLSAPIValidated(unsigned int uiInstanceKind, 
+		tlsindextype iValueCount, unsigned int uiInitializationFlags);
+	static void _OU_CONVENTION_API FinalizeTLSAPIValidated(unsigned int uiInstanceKind);
 };
 
 
