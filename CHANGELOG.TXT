@@ -7,6 +7,11 @@ Legend
  [!]  An important note
 =======================
 
+2009/09/08 oleh_derevenko
+
+ [-]  Enumerated type increment/decrement operators re-implemented in a way that
+      can't produce bad code with modern GCCs due to aliasing rules violation.
+
 2008/06/26 oleh_derevenko
 
  [+]  --disable-asserts option support added for configure.

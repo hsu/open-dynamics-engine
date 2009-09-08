@@ -45,90 +45,32 @@ BEGIN_NAMESPACE_OU();
 
 template<typename EnumType>
 _OU_INLINE EnumType &_OU_CONVENTION_API operator ++(EnumType &Value)
-{ 
-	if (sizeof(EnumType) == sizeof(unsigned char))
-	{
-		return (EnumType &)(++((unsigned char &)Value));
-	}
-	else if (sizeof(EnumType) == sizeof(unsigned short))
-	{
-		return (EnumType &)(++((unsigned short &)Value));
-	}
-	else if (sizeof(EnumType) == sizeof(unsigned int))
-	{
-		return (EnumType &)(++((unsigned int &)Value));
-	}
-	else
-	{
-		// Compiler has to warn on type cast in case of type size mismatch
-		return (EnumType &)(++((unsigned long &)Value));
-	}
+{
+	Value = (EnumType)(Value + 1);
+	return Value;
 }
 
 template<typename EnumType>
 _OU_INLINE EnumType _OU_CONVENTION_API operator ++(EnumType &Value, int)
 {
-	if (sizeof(EnumType) == sizeof(unsigned char))
-	{
-		return (EnumType)(((unsigned char &)Value)++);
-	}
-	else if (sizeof(EnumType) == sizeof(unsigned short))
-	{
-		return (EnumType)(((unsigned short &)Value)++);
-	}
-	else if (sizeof(EnumType) == sizeof(unsigned int))
-	{
-		return (EnumType)(((unsigned int &)Value)++);
-	}
-	else
-	{
-		// Compiler has to warn on type cast in case of type size mismatch
-		return (EnumType)(((unsigned long &)Value)++);
-	}
+	EnumType ValueCopy = Value;
+	Value = (EnumType)(Value + 1);
+	return ValueCopy;
 }
 
 template<typename EnumType>
 _OU_INLINE EnumType &_OU_CONVENTION_API operator --(EnumType &Value)
-{ 
-	if (sizeof(EnumType) == sizeof(unsigned char))
-	{
-		return (EnumType &)(--((unsigned char &)Value));
-	}
-	else if (sizeof(EnumType) == sizeof(unsigned short))
-	{
-		return (EnumType &)(--((unsigned short &)Value));
-	}
-	else if (sizeof(EnumType) == sizeof(unsigned int))
-	{
-		return (EnumType &)(--((unsigned int &)Value));
-	}
-	else
-	{
-		// Compiler has to warn on type cast in case of type size mismatch
-		return (EnumType &)(--((unsigned long &)Value));
-	}
+{
+	Value = (EnumType)(Value - 1);
+	return Value;
 }
 
 template<typename EnumType>
 _OU_INLINE EnumType _OU_CONVENTION_API operator --(EnumType &Value, int)
 {
-	if (sizeof(EnumType) == sizeof(unsigned char))
-	{
-		return (EnumType)(((unsigned char &)Value)--);
-	}
-	else if (sizeof(EnumType) == sizeof(unsigned short))
-	{
-		return (EnumType)(((unsigned short &)Value)--);
-	}
-	else if (sizeof(EnumType) == sizeof(unsigned int))
-	{
-		return (EnumType)(((unsigned int &)Value)--);
-	}
-	else
-	{
-		// Compiler has to warn on type cast in case of type size mismatch
-		return (EnumType)(((unsigned long &)Value)--);
-	}
+	EnumType ValueCopy = Value;
+	Value = (EnumType)(Value - 1);
+	return ValueCopy;
 }
 
 
