@@ -8348,7 +8348,7 @@ bool TestIntTypes_Int64()
 			break;
 		}
 		
-#if _OU_TARGET_ARCH == _OU_TARGET_ARCH_X86
+#if _OU_TARGET_ARCH == _OU_TARGET_ARCH_X86 && _OU_TARGET_OS != _OU_TARGET_OS_MAC
 		
 		if (offsetof(CTestIntTypes_int64, m_iValue) != 8)
 		{
@@ -8397,7 +8397,7 @@ bool TestIntTypes_UInt64()
 			break;
 		}
 		
-#if _OU_TARGET_OS != _OU_TARGET_OS_MAC
+#if _OU_TARGET_ARCH == _OU_TARGET_ARCH_X86 && _OU_TARGET_OS != _OU_TARGET_OS_MAC
 		
 		if (offsetof(CTestIntTypes_uint64, m_iValue) != 8)
 		{

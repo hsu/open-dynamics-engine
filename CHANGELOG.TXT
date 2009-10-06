@@ -7,6 +7,11 @@ Legend
  [!]  An important note
 =======================
 
+2009/10/07 oleh_derevenko
+
+ [-]  Tests corrected to avoid checking int64ou alignment on Macs
+      (just like for uint64ou)
+
 2009/09/08 oleh_derevenko
 
  [-]  Enumerated type increment/decrement operators re-implemented in a way that
