@@ -99,35 +99,35 @@ typedef ::__ou_global_uint64 uint64ou;
 #endif // #if _OU_TARGET_OS == ...
 
 
-#define OU_BITS_IN_BYTE		8
+#define OU_BITS_IN_BYTE		8U
 
-#define OU_UINT8_BITS		(sizeof(uint8ou) * OU_BITS_IN_BYTE)
-#define OU_INT8_BITS		(sizeof(int8ou) * OU_BITS_IN_BYTE)
-#define OU_UINT8_MAX		((uint8ou)(-1))
-#define OU_UINT8_MIN		((uint8ou)0)
-#define OU_INT8_MAX			((int8ou)(OU_UINT8_MAX >> 1))
-#define OU_INT8_MIN			((int8ou)(OU_UINT8_MAX - OU_INT8_MAX))
+#define OU_UINT8_BITS		(sizeof(_OU_NAMESPACE::uint8ou) * OU_BITS_IN_BYTE)
+#define OU_INT8_BITS		(sizeof(_OU_NAMESPACE::int8ou) * OU_BITS_IN_BYTE)
+#define OU_UINT8_MAX		((_OU_NAMESPACE::uint8ou)(-1))
+#define OU_UINT8_MIN		((_OU_NAMESPACE::uint8ou)0)
+#define OU_INT8_MAX			((_OU_NAMESPACE::int8ou)(OU_UINT8_MAX >> 1))
+#define OU_INT8_MIN			((_OU_NAMESPACE::int8ou)(OU_UINT8_MAX - OU_INT8_MAX))
 
-#define OU_UINT16_BITS		(sizeof(uint16ou) * OU_BITS_IN_BYTE)
-#define OU_INT16_BITS		(sizeof(int16ou) * OU_BITS_IN_BYTE)
-#define OU_UINT16_MAX		((uint16ou)(-1))
-#define OU_UINT16_MIN		((uint16ou)0)
-#define OU_INT16_MAX		((int16ou)(OU_UINT16_MAX >> 1))
-#define OU_INT16_MIN		((int16ou)(OU_UINT16_MAX - OU_INT16_MAX))
+#define OU_UINT16_BITS		(sizeof(_OU_NAMESPACE::uint16ou) * OU_BITS_IN_BYTE)
+#define OU_INT16_BITS		(sizeof(_OU_NAMESPACE::int16ou) * OU_BITS_IN_BYTE)
+#define OU_UINT16_MAX		((_OU_NAMESPACE::uint16ou)(-1))
+#define OU_UINT16_MIN		((_OU_NAMESPACE::uint16ou)0)
+#define OU_INT16_MAX		((_OU_NAMESPACE::int16ou)(OU_UINT16_MAX >> 1))
+#define OU_INT16_MIN		((_OU_NAMESPACE::int16ou)(OU_UINT16_MAX - OU_INT16_MAX))
 
-#define OU_UINT32_BITS		(sizeof(uint32ou) * OU_BITS_IN_BYTE)
-#define OU_INT32_BITS		(sizeof(int32ou) * OU_BITS_IN_BYTE)
-#define OU_UINT32_MAX		((uint32ou)(-1))
-#define OU_UINT32_MIN		((uint32ou)0)
-#define OU_INT32_MAX		((int32ou)(OU_UINT32_MAX >> 1))
-#define OU_INT32_MIN		((int32ou)(OU_UINT32_MAX - OU_INT32_MAX))
+#define OU_UINT32_BITS		(sizeof(_OU_NAMESPACE::uint32ou) * OU_BITS_IN_BYTE)
+#define OU_INT32_BITS		(sizeof(_OU_NAMESPACE::int32ou) * OU_BITS_IN_BYTE)
+#define OU_UINT32_MAX		((_OU_NAMESPACE::uint32ou)(-1))
+#define OU_UINT32_MIN		((_OU_NAMESPACE::uint32ou)0)
+#define OU_INT32_MAX		((_OU_NAMESPACE::int32ou)(OU_UINT32_MAX >> 1))
+#define OU_INT32_MIN		((_OU_NAMESPACE::int32ou)(OU_UINT32_MAX - OU_INT32_MAX))
 
-#define OU_UINT64_BITS		(sizeof(uint64ou) * OU_BITS_IN_BYTE)
-#define OU_INT64_BITS		(sizeof(int64ou) * OU_BITS_IN_BYTE)
-#define OU_UINT64_MAX		((uint64ou)(-1))
-#define OU_UINT64_MIN		((uint64ou)0)
-#define OU_INT64_MAX		((int64ou)(OU_UINT64_MAX >> 1))
-#define OU_INT64_MIN		((int64ou)(OU_UINT64_MAX - OU_INT64_MAX))
+#define OU_UINT64_BITS		(sizeof(_OU_NAMESPACE::uint64ou) * OU_BITS_IN_BYTE)
+#define OU_INT64_BITS		(sizeof(_OU_NAMESPACE::int64ou) * OU_BITS_IN_BYTE)
+#define OU_UINT64_MAX		((_OU_NAMESPACE::uint64ou)(-1))
+#define OU_UINT64_MIN		((_OU_NAMESPACE::uint64ou)0)
+#define OU_INT64_MAX		((_OU_NAMESPACE::int64ou)(OU_UINT64_MAX >> 1))
+#define OU_INT64_MIN		((_OU_NAMESPACE::int64ou)(OU_UINT64_MAX - OU_INT64_MAX))
 
 
 END_NAMESPACE_OU();

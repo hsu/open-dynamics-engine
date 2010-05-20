@@ -47,7 +47,10 @@
 //////////////////////////////////////////////////////////////////////////
 // OU_ALIGNED_SIZE macro
 
-#define OU_ALIGNED_SIZE(Size, Alignment) (((size_t)(Size) + ((Alignment) - 1)) & ~((size_t)((Alignment) - 1)))
+#define OU_ALIGNED_SIZET(Size, Alignment) (((size_t)(Size) + (size_t)((Alignment) - 1)) & ~((size_t)((Alignment) - 1)))
+#define OU_ALIGNED_INT(Size, Alignment) (((unsigned int)(Size) + (unsigned int)((Alignment) - 1)) & ~((unsigned int)((Alignment) - 1)))
+
+#define OU_ALIGNED_SIZE(Size, Alignment) OU_ALIGNED_SIZET(Size, Alignment)
 
 
 //////////////////////////////////////////////////////////////////////////
