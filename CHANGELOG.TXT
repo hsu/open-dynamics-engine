@@ -7,6 +7,11 @@ Legend
  [!]  An important note
 =======================
 
+2010/04/24 oleh_derevenko
+
+ [+]  A cast operator to non-const reference of contained type added for
+      CTypeSimpleWrapper.
+
 2009/10/07 oleh_derevenko
 
  [-]  Tests corrected to avoid checking int64ou alignment on Macs
