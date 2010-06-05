@@ -165,7 +165,7 @@
 		&& (_OU_NAMESPACE::CAssertionCheckCustomization::GetAssertFailureCustomHandler()( \
 			_OU_NAMESPACE::AFS_ASSERT, #Condition, __FILE__, __LINE__), true)))
 
-#define OU__CHECK_HANDLER(Condition) (((bConditionValue = false, false) || (Condition)) \
+#define OU__CHECK_HANDLER(Condition) (((bConditionValue = false || (Condition)), bConditionValue) \
 	|| (_OU_NAMESPACE::CAssertionCheckCustomization::GetAssertFailureCustomHandler() \
 		&& (_OU_NAMESPACE::CAssertionCheckCustomization::GetAssertFailureCustomHandler()( \
 			_OU_NAMESPACE::AFS_CHECK,  #Condition, __FILE__, __LINE__), true)))
