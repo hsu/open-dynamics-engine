@@ -1229,7 +1229,7 @@ static _OU_ALWAYSINLINE_PRE atomicord32 _OU_ALWAYSINLINE_IN _OU_CONVENTION_API
 
 	asm volatile (
 		"lock; xaddl %2, %0;"
-		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=a" (aoResult)
+		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=r" (aoResult)
 		: "1" (aoResult)
 		: "memory");
 
@@ -1243,7 +1243,7 @@ static _OU_ALWAYSINLINE_PRE atomicord32 _OU_ALWAYSINLINE_IN _OU_CONVENTION_API
 
 	asm volatile (
 		"lock; xaddl %2, %0;"
-		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=a" (aoResult)
+		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=r" (aoResult)
 		: "1" (aoResult)
 		: "memory");
 
@@ -1258,7 +1258,7 @@ static _OU_ALWAYSINLINE_PRE atomicord32 _OU_ALWAYSINLINE_IN _OU_CONVENTION_API
 
 	asm volatile (
 		"xchg %2, %0;"
-		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=a" (aoResult)
+		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=r" (aoResult)
 		: "1" (aoExchange)
 		: "memory");
 
@@ -1272,7 +1272,7 @@ static _OU_ALWAYSINLINE_PRE atomicord32 _OU_ALWAYSINLINE_IN _OU_CONVENTION_API
 
 	asm volatile (
 		"lock; xaddl %2, %0;"
-		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=a" (aoResult)
+		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=r" (aoResult)
 		: "1" (aoAddend)
 		: "memory");
 
