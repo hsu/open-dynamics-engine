@@ -1230,7 +1230,7 @@ static _OU_ALWAYSINLINE_PRE atomicord32 _OU_ALWAYSINLINE_IN _OU_CONVENTION_API
 	asm volatile (
 		"lock; xaddl %2, %0;"
 		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=r" (aoResult)
-		: "1" (aoResult)
+		: "1" (aoResult), "m" (*paoDestination)
 		: "memory");
 
 	return aoResult + 1;
@@ -1244,7 +1244,7 @@ static _OU_ALWAYSINLINE_PRE atomicord32 _OU_ALWAYSINLINE_IN _OU_CONVENTION_API
 	asm volatile (
 		"lock; xaddl %2, %0;"
 		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=r" (aoResult)
-		: "1" (aoResult)
+		: "1" (aoResult), "m" (*paoDestination)
 		: "memory");
 
 	return aoResult - 1;
@@ -1259,7 +1259,7 @@ static _OU_ALWAYSINLINE_PRE atomicord32 _OU_ALWAYSINLINE_IN _OU_CONVENTION_API
 	asm volatile (
 		"xchg %2, %0;"
 		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=r" (aoResult)
-		: "1" (aoExchange)
+		: "1" (aoExchange), "m" (*paoDestination)
 		: "memory");
 
 	return aoResult;
@@ -1273,7 +1273,7 @@ static _OU_ALWAYSINLINE_PRE atomicord32 _OU_ALWAYSINLINE_IN _OU_CONVENTION_API
 	asm volatile (
 		"lock; xaddl %2, %0;"
 		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=r" (aoResult)
-		: "1" (aoAddend)
+		: "1" (aoAddend), "m" (*paoDestination)
 		: "memory");
 
 	return aoResult;
@@ -1288,7 +1288,7 @@ static _OU_ALWAYSINLINE_PRE bool _OU_ALWAYSINLINE_IN _OU_CONVENTION_API
 		"lock; cmpxchgl %3, %0;"
 		"setzb %1;"
 		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=a" (bResult)
-		: "a" (aoComparand), "r" (aoExchange)
+		: "a" (aoComparand), "r" (aoExchange), "m" (*paoDestination)
 		: "memory");
 
 	return bResult;
@@ -1309,7 +1309,7 @@ static _OU_ALWAYSINLINE_PRE atomicord32 _OU_ALWAYSINLINE_IN _OU_CONVENTION_API
 		"andl  %3, %2;"
 		"lock; cmpxchgl %2, %0;"
 		"jnz   0;"
-		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=a" (aoResult), "=r" (aoExchange)
+		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=a" (aoResult), "=&r" (aoExchange)
 		: "a" (*paoDestination), "g" (aoBitMask), "m" (*paoDestination)
 		: "memory");
 
@@ -1328,7 +1328,7 @@ static _OU_ALWAYSINLINE_PRE atomicord32 _OU_ALWAYSINLINE_IN _OU_CONVENTION_API
 		"orl   %3, %2;"
 		"lock; cmpxchgl %2, %0;"
 		"jnz   0;"
-		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=a" (aoResult), "=r" (aoExchange)
+		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=a" (aoResult), "=&r" (aoExchange)
 		: "a" (*paoDestination), "g" (aoBitMask), "m" (*paoDestination)
 		: "memory");
 
@@ -1347,7 +1347,7 @@ static _OU_ALWAYSINLINE_PRE atomicord32 _OU_ALWAYSINLINE_IN _OU_CONVENTION_API
 		"xorl  %3, %2;"
 		"lock; cmpxchgl %2, %0;"
 		"jnz   0;"
-		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=a" (aoResult), "=r" (aoExchange)
+		: "=m" (*(volatile _ou_atomic_CLargeStruct *)paoDestination), "=a" (aoResult), "=&r" (aoExchange)
 		: "a" (*paoDestination), "g" (aoBitMask), "m" (*paoDestination)
 		: "memory");
 
