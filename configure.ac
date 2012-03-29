@@ -84,8 +84,6 @@ AC_C_VOLATILE
 AC_CHECK_TYPES([ptrdiff_t])
 
 # Checks for library functions.
-AC_FUNC_MALLOC
-AC_FUNC_REALLOC
 AC_CHECK_FUNCS([memset])
 
 if test $targetos = _OU_TARGET_OS_MAC
