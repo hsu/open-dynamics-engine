@@ -36,7 +36,7 @@
 
 #if _OU_TARGET_OS == _OU_TARGET_OS_WINDOWS
 
-#include <Windows.h>
+#include <windows.h>
 
 
 #else // #if _OU_TARGET_OS != _OU_TARGET_OS_WINDOWS
