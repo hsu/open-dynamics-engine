@@ -9,6 +9,8 @@ AC_CANONICAL_HOST
 AC_USE_SYSTEM_EXTENSIONS
 AM_INIT_AUTOMAKE(foreign)
 
+AC_LANG([C++])
+
 AC_MSG_CHECKING([target OS])
 case "$host_os" in
   cygwin* | mingw*)
