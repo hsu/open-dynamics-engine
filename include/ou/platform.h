@@ -76,7 +76,11 @@
 
 #elif defined(TARGET_OS_IPHONE)
  
-#define _OU_TARGET_OS           _OU_TARGET_OS_IOS
+#define _OU_TARGET_OS			_OU_TARGET_OS_IOS
+
+#if !defined(MAC_OS_X_VERSION)
+#define MAC_OS_X_VERSION	1050
+#endif
 
 
 #elif defined(__APPLE__)

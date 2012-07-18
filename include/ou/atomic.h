@@ -668,7 +668,7 @@ static _OU_ALWAYSINLINE_PRE void _OU_ALWAYSINLINE_IN _OU_CONVENTION_API
 //////////////////////////////////////////////////////////////////////////
 // Mac implementation
 
-#if _OU_TARGET_OS == _OU_TARGET_OS_MAC
+#if _OU_TARGET_OS == _OU_TARGET_OS_MAC || _OU_TARGET_OS == _OU_TARGET_OS_IOS
 
 #if MAC_OS_X_VERSION >= 1040
 
