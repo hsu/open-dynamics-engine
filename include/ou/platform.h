@@ -31,14 +31,15 @@
 //////////////////////////////////////////////////////////////////////////
 // Target definitions
 
-#define _OU_TARGET_OS_GENUNIX	1
-#define _OU_TARGET_OS_WINDOWS	2
-#define _OU_TARGET_OS_QNX		3
-#define _OU_TARGET_OS_MAC		4
-#define _OU_TARGET_OS_AIX		5
-#define _OU_TARGET_OS_SUNOS		6
+#define _OU_TARGET_OS_GENUNIX   1
+#define _OU_TARGET_OS_WINDOWS   2
+#define _OU_TARGET_OS_QNX       3
+#define _OU_TARGET_OS_MAC       4
+#define _OU_TARGET_OS_AIX       5
+#define _OU_TARGET_OS_SUNOS     6
+#define _OU_TARGET_OS_IOS       7
 
-#define _OU_TARGET_OS__MAX		7
+#define _OU_TARGET_OS__MAX      8
 
 
 #define _OU_TARGET_BITS_32		1
@@ -47,14 +48,15 @@
 #define _OU_TARGET_BITS__MAX	3
 
 
-#define _OU_TARGET_ARCH_OTHER	1
-#define _OU_TARGET_ARCH_X86	2
-#define _OU_TARGET_ARCH_IA64	3
-#define _OU_TARGET_ARCH_X64		4
-#define _OU_TARGET_ARCH_POWERPC	5
-#define _OU_TARGET_ARCH_SPARC	6
+#define _OU_TARGET_ARCH_OTHER   1
+#define _OU_TARGET_ARCH_X86     2
+#define _OU_TARGET_ARCH_IA64    3
+#define _OU_TARGET_ARCH_X64     4
+#define _OU_TARGET_ARCH_POWERPC 5
+#define _OU_TARGET_ARCH_SPARC   6
+#define _OU_TARGET_ARCH_ARM     7
 
-#define _OU_TARGET_ARCH__MAX	7
+#define _OU_TARGET_ARCH__MAX    8
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -70,6 +72,11 @@
 #elif defined(__QNX__)
 
 #define _OU_TARGET_OS			_OU_TARGET_OS_QNX
+
+
+#elif defined(TARGET_OS_IPHONE)
+ 
+#define _OU_TARGET_OS           _OU_TARGET_OS_IOS
 
 
 #elif defined(__APPLE__)
@@ -185,6 +192,11 @@
 #elif defined(__sparc__)
 
 #define _OU_TARGET_ARCH			_OU_TARGET_ARCH_SPARC
+
+
+#elif defined(TARGET_OS_IPHONE)
+ 
+#define _OU_TARGET_ARCH         _OU_TARGET_ARCH_ARM
 
 
 #else // Unknown architecture

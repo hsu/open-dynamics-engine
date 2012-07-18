@@ -29,17 +29,17 @@
 #include <ou/customization.h>
 #include <ou/macros.h>
 
-#if _OU_TARGET_OS == _OU_TARGET_OS_MAC
+#if _OU_TARGET_OS == _OU_TARGET_OS_MAC || _OU_TARGET_OS == _OU_TARGET_OS_IOS
 
 #include <stdlib.h>
 
 
-#else // #if _OU_TARGET_OS != _OU_TARGET_OS_MAC
+#else // #if _OU_TARGET_OS != _OU_TARGET_OS_MAC && _OU_TARGET_OS != _OU_TARGET_OS_IOS
 
 #include <malloc.h>
 
 
-#endif // #if _OU_TARGET_OS != _OU_TARGET_OS_MAC
+#endif // #if _OU_TARGET_OS != _OU_TARGET_OS_MAC && _OU_TARGET_OS != _OU_TARGET_OS_IOS
 
 
 BEGIN_NAMESPACE_OU();
