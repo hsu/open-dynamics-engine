@@ -8739,6 +8739,7 @@ int const CEnumSortedElementArray<int, _OU_TARGET_OS__MAX - 1, int, 100>::m_aetE
 	_OU_TARGET_OS_MAC, // _OU_TARGET_OS_MAC
 	_OU_TARGET_OS_AIX, // _OU_TARGET_OS_AIX
 	_OU_TARGET_OS_SUNOS, // _OU_TARGET_OS_SUNOS
+	_OU_TARGET_OS_IOS, // _OU_TARGET_OS_IOS
 };
 static const CEnumSortedElementArray<int, _OU_TARGET_OS__MAX - 1, int, 100> g_ai_TargetOrderCheck;
 
@@ -8751,6 +8752,7 @@ const char *const CEnumUnsortedElementArray<int, _OU_TARGET_OS__MAX - 1, const c
 	"MAC", // _OU_TARGET_OS_MAC
 	"AIX", // _OU_TARGET_OS_AIX
 	"SunOS", // _OU_TARGET_OS_SUNOS
+	"iOS", // _OU_TARGET_OS_IOS
 };
 static const CEnumUnsortedElementArray<int, _OU_TARGET_OS__MAX - 1, const char *, 100> g_aszOSNames;
 
@@ -8781,6 +8783,7 @@ int const CEnumSortedElementArray<int, _OU_TARGET_ARCH__MAX - 1, int, 102>::m_ae
 	_OU_TARGET_ARCH_X64, // _OU_TARGET_ARCH_X64
 	_OU_TARGET_ARCH_POWERPC, // _OU_TARGET_ARCH_POWERPC
 	_OU_TARGET_ARCH_SPARC, // _OU_TARGET_ARCH_SPARC
+	_OU_TARGET_ARCH_ARM, // _OU_TARGET_ARCH_ARM
 };
 static const CEnumSortedElementArray<int, _OU_TARGET_ARCH__MAX - 1, int, 102> g_ai_ArchitecturesOrderCheck;
 
@@ -8793,6 +8796,7 @@ const char *const CEnumUnsortedElementArray<int, _OU_TARGET_ARCH__MAX - 1, const
 	"x64", // _OU_TARGET_ARCH_X64
 	"PowerPC", // _OU_TARGET_ARCH_POWERPC
 	"Sparc", // _OU_TARGET_ARCH_SPARC
+	"ARM", // _OU_TARGET_ARCH_ARM
 };
 static const CEnumUnsortedElementArray<int, _OU_TARGET_ARCH__MAX - 1, const char *, 102> g_aszArchitecturesNames;
 
